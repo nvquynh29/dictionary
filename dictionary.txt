@@ -1,0 +1,5 @@
+hello	xin chào
+cat	con mèo
+dog	con chó
+school	trường học
+student	học sinh
