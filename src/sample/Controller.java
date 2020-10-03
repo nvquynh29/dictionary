@@ -8,10 +8,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -29,12 +27,13 @@ public class Controller implements Initializable {
     @FXML
     TextArea textArea;
 
-    private List<Word> dictionary;
+    private List<Word> words;
+    private List<String> wordTargets;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        dictionary = this.insertFromFile();
-        initListView(dictionary);
+        words = getDictionaryFromDB();
+        initListView(words);
     }
 
     private void initListView(List<Word> words) {
@@ -55,39 +54,44 @@ public class Controller implements Initializable {
         });
     }
 
-    public List<Word> insertFromFile() {
-        List<Word> words = new ArrayList<>();
-        try {
-            FileReader fr = new FileReader("dictionary.txt", StandardCharsets.UTF_8);
-            BufferedReader br = new BufferedReader(fr);
-            String s;
-            while ((s = br.readLine()) != null) {
-                String[] arr = s.split("\t");
-                Word newWord = new Word(arr[0], arr[1]);
-                words.add(newWord);
+    public List<Word> getDictionaryFromDB() {
+        Connection conn = DatabaseConnection.ConnectDB();
+        words = new ArrayList<>();
+        wordTargets = new ArrayList<>();
+
+        if (DatabaseConnection.isConnected()) {
+            try {
+                ResultSet rs = DatabaseConnection.getResultSet();
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String word = rs.getString("word");
+                    String html = rs.getString("html");
+                    String description = rs.getString("description");
+                    String pronounce = rs.getString("pronounce");
+
+                    wordTargets.add(word);
+                    Word newWord = new Word(id, word, html, description, pronounce);
+                    words.add(newWord);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            br.close();
-            fr.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Error while load database!");
+            System.exit(1);
         }
         return words;
-    }
-
-    private List<String> targetWords(List<Word> list) {
-        List<String> result = new ArrayList<>();
-        for (Word word : list) {
-            result.add(word.getWordTarget());
-        }
-        return result;
     }
 
     public void displaySelected(MouseEvent event) {
         Word wordSelected = lvWords.getSelectionModel().getSelectedItem();
         if (wordSelected != null) {
-            String text = "Selected word: " + wordSelected.getWordTarget();
-            text += "\nWord Explain: " + wordSelected.getWordExplain();
+            String text = "Selected = " + wordSelected.getWordTarget();
             textArea.setText(text);
         }
+    }
+
+    public void keyPress(KeyEvent event) {
+        
     }
 }
