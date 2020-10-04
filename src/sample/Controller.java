@@ -3,11 +3,15 @@ package sample;
 import com.sun.javafx.scene.SceneUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
 
 import java.awt.event.ActionEvent;
 import java.net.URL;
@@ -27,7 +31,7 @@ public class Controller implements Initializable {
     ListView<Word> lvWords;
 
     @FXML
-    TextArea textArea;
+    WebView webView;
 
     private List<Word> words;
     private List<String> wordTargets;
@@ -86,19 +90,19 @@ public class Controller implements Initializable {
         return words;
     }
 
-    public void displaySelected(MouseEvent event) {
+    public void displaySelected() {
         Word wordSelected = lvWords.getSelectionModel().getSelectedItem();
         if (wordSelected != null) {
-            String text = "Selected = " + wordSelected.getWordTarget();
-            textArea.setText(text);
+            WebEngine webEngine = webView.getEngine();
+            String html = wordSelected.getHtml();
+            webEngine.loadContent(html);
         }
     }
 
-    public void onEnter(javafx.event.ActionEvent actionEvent) {
+    public void KeyPress() {
         String word = txtSearch.getText();
         ArrayList<Word> result = new ArrayList<>();
-        words = getDictionaryFromDB();
-        for (Word temp : words) {
+        for (Word temp : this.words) {
             String thisWord = temp.getWordTarget();
             if (thisWord.toLowerCase().startsWith(word.toLowerCase())) {
                 result.add(temp);
@@ -107,6 +111,9 @@ public class Controller implements Initializable {
         initListView(result);
     }
 
-//    public void keyPress(KeyEvent event) {
-//    }
+    public void OnEnter() {
+        lvWords.getSelectionModel().select(0);
+        displaySelected();
+    }
+
 }

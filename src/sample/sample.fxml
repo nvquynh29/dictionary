@@ -5,11 +5,11 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.web.WebView?>
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
@@ -36,14 +36,14 @@
    <left>
       <AnchorPane prefHeight="575.0" prefWidth="900.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="txtSearch" layoutX="70.0" layoutY="32.0" onAction="#onEnter" prefHeight="37.0" prefWidth="806.0" />
+            <TextField fx:id="txtSearch" layoutX="70.0" layoutY="32.0" onAction="#OnEnter" onKeyReleased="#KeyPress" prefHeight="37.0" prefWidth="806.0" />
             <Button fx:id="btnBack" layoutX="15.0" layoutY="33.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="42.0" text="←" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="18.0" />
                </font>
             </Button>
             <ListView fx:id="lvWords" layoutX="14.0" layoutY="81.0" onMouseClicked="#displaySelected" prefHeight="481.0" prefWidth="225.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="84.0" />
-            <TextArea fx:id="textArea" layoutX="268.0" layoutY="81.0" prefHeight="480.0" prefWidth="609.0" AnchorPane.bottomAnchor="10.0" />
+            <WebView fx:id="webView" layoutX="268.0" layoutY="81.0" prefHeight="480.0" prefWidth="609.0" />
          </children>
       </AnchorPane>
    </left>
