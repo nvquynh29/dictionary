@@ -1,5 +1,6 @@
 package sample;
 
+import com.sun.javafx.scene.SceneUtils;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -8,6 +9,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 
+import java.awt.event.ActionEvent;
 import java.net.URL;
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class Controller implements Initializable {
     private void initListView(List<Word> words) {
         ObservableList<Word> listWords = FXCollections.observableArrayList();
         listWords.addAll(words);
+        lvWords.getItems().clear();
         lvWords.getItems().addAll(listWords);
         lvWords.setCellFactory(param -> new ListCell<Word>() {
             @Override
@@ -91,7 +94,19 @@ public class Controller implements Initializable {
         }
     }
 
-    public void keyPress(KeyEvent event) {
-        
+    public void onEnter(javafx.event.ActionEvent actionEvent) {
+        String word = txtSearch.getText();
+        ArrayList<Word> result = new ArrayList<>();
+        words = getDictionaryFromDB();
+        for (Word temp : words) {
+            String thisWord = temp.getWordTarget();
+            if (thisWord.toLowerCase().startsWith(word.toLowerCase())) {
+                result.add(temp);
+            }
+        }
+        initListView(result);
     }
+
+//    public void keyPress(KeyEvent event) {
+//    }
 }
