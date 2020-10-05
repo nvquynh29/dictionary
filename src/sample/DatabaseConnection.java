@@ -21,12 +21,12 @@ public class DatabaseConnection {
         return connection != null;
     }
 
-    public  static ResultSet getResultSet() throws SQLException {
+    public static ResultSet getResultSet(String tableName) throws SQLException {
         Connection conn = DatabaseConnection.ConnectDB();
-        // ReadOnly
-        Statement statement = (Statement) conn.createStatement();
-        String sql = "SELECT id, word, html, description, pronounce FROM av";
+        Statement statement = conn.createStatement();
+        String sql = "SELECT id, word, html, description, pronounce FROM " + tableName;
         ResultSet rs = statement.executeQuery(sql);
         return rs;
     }
+
 }
