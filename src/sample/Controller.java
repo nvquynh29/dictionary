@@ -1,7 +1,5 @@
 package sample;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -12,10 +10,10 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
+import java.awt.event.MouseEvent;
 import java.net.URL;
 import java.sql.*;
 import java.util.*;
@@ -135,8 +133,6 @@ public class Controller implements Initializable {
         return result;
     }
 
-//    public void
-
     public void displaySelected() {
         Word wordSelected = lvWords.getSelectionModel().getSelectedItem();
         if (wordSelected != null) {
@@ -172,9 +168,64 @@ public class Controller implements Initializable {
         initListView(result);
     }
 
+    public boolean check() {
+        String word = txtSearch.getText();
+        ArrayList<Word> result = new ArrayList<>();
+        int mode = cbLanguage.getSelectionModel().getSelectedIndex();
+        if (mode == 0) {
+            for (Word temp : dictionaryEV) {
+                String thisWord = temp.getWordTarget();
+                if (thisWord.toLowerCase().startsWith(word.toLowerCase())) {
+                    result.add(temp);
+                }
+            }
+        } else {
+            for (Word temp : dictionaryVE) {
+                String thisWord = temp.getWordTarget();
+                if (thisWord.toLowerCase().startsWith(word.toLowerCase())) {
+                    result.add(temp);
+                }
+            }
+        }
+        if (result.size() == 0) return false;
+        else return true;
+    }
+
+    private void showAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        int mode = cbLanguage.getSelectionModel().getSelectedIndex();
+        if (mode == 0) {
+            alert.setTitle("Alert!");
+            if (txtSearch.getText().trim().isEmpty() || txtSearch.getText() == null) {
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter the word!");
+            }
+            else if (!check()) {
+                alert.setHeaderText(txtSearch.getText());
+                alert.setContentText("Do you want to search online?");
+            }
+        }
+        else {
+            alert.setTitle("Thong Bao!");
+            if (txtSearch.getText().trim().isEmpty() || txtSearch.getText() == null) {
+                alert.setHeaderText(null);
+                alert.setContentText("Vui long nhap tu!");
+            }
+            else if (!check()) {
+                alert.setHeaderText(txtSearch.getText());
+                alert.setContentText("Ban co muon tra online khong?");
+            }
+        }
+
+        alert.showAndWait();
+    }
+
     public void OnEnter() {
-        lvWords.getSelectionModel().select(0);
-        displaySelected();
+        if (check()) {
+            lvWords.getSelectionModel().select(0);
+            displaySelected();
+        }
+        else showAlert();
     }
 
     public void languageSelected(ActionEvent event) {
