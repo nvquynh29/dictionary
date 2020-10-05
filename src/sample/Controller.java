@@ -1,5 +1,7 @@
 package sample;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -16,9 +18,7 @@ import javafx.scene.web.WebView;
 
 import java.net.URL;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class Controller implements Initializable {
     @FXML
@@ -44,7 +44,7 @@ public class Controller implements Initializable {
 
     private List<Word> dictionaryEV;
     private List<Word> dictionaryVE;
-    private List<Word> listSearched;
+    private Stack<Word> listSearched;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -58,6 +58,8 @@ public class Controller implements Initializable {
         initListView(dictionaryEV);
         initButton();
         initComboBox();
+
+        listSearched = new Stack<>();
     }
     private void initListView(List<Word> words) {
         ObservableList<Word> listWords = FXCollections.observableArrayList();
@@ -90,6 +92,8 @@ public class Controller implements Initializable {
 
         btnSpeaker.setGraphic(ivSpeaker);
         btnVoice.setGraphic(ivVoice);
+
+        btnBack.setDisable(true);
     }
 
     public void initComboBox() {
@@ -139,6 +143,10 @@ public class Controller implements Initializable {
             WebEngine webEngine = webView.getEngine();
             String html = wordSelected.getHtml();
             webEngine.loadContent(html);
+
+            //update Stack wordSelected and add condition to enable btnBack
+            if (listSearched.size() == 0 || wordSelected != listSearched.lastElement()) listSearched.push(wordSelected);
+            if (listSearched.size() > 1) btnBack.setDisable(false);
         }
     }
 
@@ -177,4 +185,18 @@ public class Controller implements Initializable {
             initListView(dictionaryVE);
         }
     }
+
+    //handler mouse event for bnBack
+    public void backButtonHandler(javafx.scene.input.MouseEvent event) {
+        //voi size = 1 tuc la trong stack chinh la tu vua chon nen ko co tu qua khu
+        if (listSearched.size() > 1) {
+            //update Stack wordSelected
+            listSearched.pop();
+            WebEngine webEngine = webView.getEngine();
+            String html = listSearched.lastElement().getHtml();
+            webEngine.loadContent(html);
+        }
+        if (listSearched.size() == 1) btnBack.setDisable(true);
+    }
+
 }

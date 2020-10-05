@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+import java.util.Stack;
+
 public class Main extends Application {
 
     @Override
@@ -17,6 +19,7 @@ public class Main extends Application {
         Image image = new Image("icons/Dictionary-icon.png");
         primaryStage.getIcons().add(image);
         primaryStage.show();
+
     }
 
 
