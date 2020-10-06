@@ -19,7 +19,6 @@ public class Main extends Application {
         Image image = new Image("icons/Dictionary-icon.png");
         primaryStage.getIcons().add(image);
         primaryStage.show();
-
     }
 
 

@@ -29,4 +29,31 @@ public class DatabaseConnection {
         return rs;
     }
 
+    public static int getTableSize(String tableName) throws SQLException {
+        ResultSet rs = DatabaseConnection.getResultSet(tableName);;
+        int size = 0;
+        while (rs.next()) {
+            size++;
+        }
+        return size;
+    }
+
+    public static void addWordToDB(String tableName, Word word) {
+        Connection conn = DatabaseConnection.ConnectDB();
+        try {
+            Statement statement = conn.createStatement();
+            int size = DatabaseConnection.getTableSize(tableName);
+            if (tableName.equals("av")) {
+                word.setId(size + 1);
+            } else {
+                word.setId(size + 4);
+            }
+            String sql = "INSERT INTO " + tableName + " (id, word, html, description, pronounce) VALUES ("
+                          + word.getId() + ", '" + word.getWordTarget() + "', '" + word.getHtml()
+                          + "', '" + word.getDescription() + "', '" + word.getPronounce() + "')";
+            statement.executeUpdate(sql);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 }

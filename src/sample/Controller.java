@@ -4,16 +4,21 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
+import javafx.stage.Stage;
 
-import java.awt.event.MouseEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.*;
@@ -43,6 +48,8 @@ public class Controller implements Initializable {
     private List<Word> dictionaryEV;
     private List<Word> dictionaryVE;
     private Stack<Word> listSearched;
+
+    Connection conn = DatabaseConnection.ConnectDB();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -107,7 +114,7 @@ public class Controller implements Initializable {
 
 
     public List<Word> getDictionary(String tableName) {
-        Connection conn = DatabaseConnection.ConnectDB();
+
         List<Word> result = new ArrayList<>();
 
         if (DatabaseConnection.isConnected()) {
@@ -141,8 +148,12 @@ public class Controller implements Initializable {
             webEngine.loadContent(html);
 
             //update Stack wordSelected and add condition to enable btnBack
-            if (listSearched.size() == 0 || wordSelected != listSearched.lastElement()) listSearched.push(wordSelected);
-            if (listSearched.size() > 1) btnBack.setDisable(false);
+            if (listSearched.size() == 0 || wordSelected != listSearched.lastElement()) {
+                listSearched.push(wordSelected);
+            }
+            if (listSearched.size() > 1) {
+                btnBack.setDisable(false);
+            }
         }
     }
 
@@ -168,7 +179,7 @@ public class Controller implements Initializable {
         initListView(result);
     }
 
-    public boolean check() {
+    public boolean checkSearchBar() {
         String word = txtSearch.getText();
         ArrayList<Word> result = new ArrayList<>();
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
@@ -200,35 +211,34 @@ public class Controller implements Initializable {
                 alert.setHeaderText(null);
                 alert.setContentText("Please enter the word!");
             }
-            else if (!check()) {
+            else if (!checkSearchBar()) {
                 alert.setHeaderText(txtSearch.getText());
                 alert.setContentText("Do you want to search online?");
             }
         }
         else {
-            alert.setTitle("Thong Bao!");
+            alert.setTitle("Thông Báo!");
             if (txtSearch.getText().trim().isEmpty() || txtSearch.getText() == null) {
                 alert.setHeaderText(null);
-                alert.setContentText("Vui long nhap tu!");
+                alert.setContentText("Vui lòng nhập từ cần tra!");
             }
-            else if (!check()) {
+            else if (!checkSearchBar()) {
                 alert.setHeaderText(txtSearch.getText());
-                alert.setContentText("Ban co muon tra online khong?");
+                alert.setContentText("Bạn có muốn tra từ online không?");
             }
         }
-
         alert.showAndWait();
     }
 
     public void OnEnter() {
-        if (check()) {
+        if (checkSearchBar()) {
             lvWords.getSelectionModel().select(0);
             displaySelected();
         }
         else showAlert();
     }
 
-    public void languageSelected(ActionEvent event) {
+    public void selectLanguage(ActionEvent event) {
         int index = cbLanguage.getSelectionModel().getSelectedIndex();
         if (index == 0) {
             initListView(dictionaryEV);
@@ -238,16 +248,46 @@ public class Controller implements Initializable {
     }
 
     //handler mouse event for bnBack
-    public void backButtonHandler(javafx.scene.input.MouseEvent event) {
+    public void backButtonHandler(MouseEvent event) {
         //voi size = 1 tuc la trong stack chinh la tu vua chon nen ko co tu qua khu
         if (listSearched.size() > 1) {
             //update Stack wordSelected
             listSearched.pop();
             WebEngine webEngine = webView.getEngine();
-            String html = listSearched.lastElement().getHtml();
+            Word lastWord = listSearched.lastElement();
+            lvWords.getSelectionModel().select(lastWord);
+            String html = lastWord.getHtml();
             webEngine.loadContent(html);
         }
-        if (listSearched.size() == 1) btnBack.setDisable(true);
+        if (listSearched.size() == 1) {
+            btnBack.setDisable(true);
+        }
+    }
+
+    public void addEVHandle(ActionEvent event) {
+        try {
+            Stage newStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/AddWordToEV.fxml"));
+            Scene addScene = new Scene(root);
+            newStage.setScene(addScene);
+            newStage.setTitle("Thêm từ mới");
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addVEHandle(ActionEvent event) {
+        try {
+            Stage newStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/AddWordToVE.fxml"));
+            Scene addScene = new Scene(root);
+            newStage.setScene(addScene);
+            newStage.setTitle("Adding new word");
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
