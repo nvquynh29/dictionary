@@ -45,8 +45,8 @@ public class Controller implements Initializable {
     @FXML
     WebView webView;
 
-    private List<Word> dictionaryEV;
-    private List<Word> dictionaryVE;
+    private static List<Word> dictionaryEV;
+    private static List<Word> dictionaryVE;
     private Stack<Word> listSearched;
 
     Connection conn = DatabaseConnection.ConnectDB();
@@ -73,7 +73,7 @@ public class Controller implements Initializable {
         lvWords.getItems().addAll(listWords);
 
         lvWords.setCellFactory(param -> new ListCell<Word>() {
-            @Override
+             @Override
             protected void updateItem(Word item, boolean empty) {
                 super.updateItem(item, empty);
 
@@ -113,7 +113,7 @@ public class Controller implements Initializable {
     }
 
 
-    public List<Word> getDictionary(String tableName) {
+    public static List<Word> getDictionary(String tableName) {
 
         List<Word> result = new ArrayList<>();
 
@@ -326,4 +326,11 @@ public class Controller implements Initializable {
         }
     }
 
+    public static void setDictionaryEV() {
+        dictionaryEV = getDictionary("av");
+    }
+
+    public static void setDictionaryVE() {
+        dictionaryVE = getDictionary("va");
+    }
 }

@@ -3,8 +3,13 @@ package dbhandle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import sample.Controller;
+import sample.DatabaseConnection;
 import sample.Word;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Optional;
 
 public class AddWordToEVController {
@@ -49,8 +54,38 @@ public class AddWordToEVController {
             html = word + "\n\n" + description;
             newWord = new Word(0, word, html, description, pronounce);
             if (newWord != null) {
-                showAlert("Thêm từ mới thành công!");
-                sample.DatabaseConnection.addWordToDB("av", newWord);
+                boolean isExisted = false;
+                try {
+                    ResultSet rs = DatabaseConnection.getResultSet("av");
+                    while (rs.next()) {
+                        String wordTarget = rs.getString("word");
+                        if (wordTarget.equals(word)) {
+                            isExisted = true;
+                            break;
+                        }
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+                if (isExisted == false) {
+                    showAlert("Thêm từ mới thành công!");
+                    sample.DatabaseConnection.addWordToDB("av", newWord);
+                    Controller.setDictionaryEV();
+                }
+                else {
+                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                    alert.setTitle("Xác nhận");
+                    alert.setHeaderText(word);
+                    alert.setContentText("Từ này đã có trong từ điển!\n Bạn có muốn cập nhật?");
+                    ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                    ButtonType buttonAccept = new ButtonType("Xác nhận");
+                    alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
+                    Optional <ButtonType> result = alert.showAndWait();
+                    if (result.get() == buttonAccept) {
+                        DatabaseConnection.updateWordToDB("av", word, html, description, pronounce);
+                        Controller.setDictionaryEV();
+                    }
+                }
             }
         }
     }
