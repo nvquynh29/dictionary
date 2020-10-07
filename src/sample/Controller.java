@@ -158,7 +158,7 @@ public class Controller implements Initializable {
     }
 
     public void KeyPress() {
-        String word = txtSearch.getText();
+        String word = txtSearch.getText().trim();
         ArrayList<Word> result = new ArrayList<>();
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
         if (mode == 0) {
@@ -180,7 +180,7 @@ public class Controller implements Initializable {
     }
 
     public boolean checkSearchBar() {
-        String word = txtSearch.getText();
+        String word = txtSearch.getText().trim();
         ArrayList<Word> result = new ArrayList<>();
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
         if (mode == 0) {
@@ -202,40 +202,76 @@ public class Controller implements Initializable {
         else return true;
     }
 
-    private void showAlert() {
+    public static boolean empty(String s) {
+        return s == null || s.trim().isEmpty();
+    }
+
+    private void showAlertInformation(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
         if (mode == 0) {
-            alert.setTitle("Alert!");
-            if (txtSearch.getText().trim().isEmpty() || txtSearch.getText() == null) {
+            if (empty(message)) {
+                alert.setTitle("Alert!");
                 alert.setHeaderText(null);
                 alert.setContentText("Please enter the word!");
             }
-            else if (!checkSearchBar()) {
-                alert.setHeaderText(txtSearch.getText());
-                alert.setContentText("Do you want to search online?");
+            else {
+                alert.setTitle("Translate!");
+                alert.setHeaderText(message.trim());
+                alert.setContentText("Meaning");
             }
         }
         else {
-            alert.setTitle("Thông Báo!");
-            if (txtSearch.getText().trim().isEmpty() || txtSearch.getText() == null) {
+            if (empty(message)) {
+                alert.setTitle("Thông Báo!");
                 alert.setHeaderText(null);
                 alert.setContentText("Vui lòng nhập từ cần tra!");
             }
-            else if (!checkSearchBar()) {
-                alert.setHeaderText(txtSearch.getText());
-                alert.setContentText("Bạn có muốn tra từ online không?");
+            else {
+                alert.setTitle("Translate!");
+                alert.setHeaderText(message.trim());
+                alert.setContentText("Meaning");
             }
         }
         alert.showAndWait();
     }
 
+    private void showAlertConfirmation() {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Confirmation Dialog");
+        alert.setHeaderText(txtSearch.getText().trim());
+        int mode = cbLanguage.getSelectionModel().getSelectedIndex();
+        if (mode == 0) {
+            alert.setContentText("This word isn't in dictionary.\n" +
+                    "Choose your option.");
+        }
+        else {
+            alert.setContentText("Từ này không có trong từ điển.\n" +
+                    "Chọn option.");
+        }
+        ButtonType buttonTypeOne = new ButtonType("Translate");
+        ButtonType buttonTypeTwo = new ButtonType("Add to dictionary");
+        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.get() == buttonTypeOne){
+            showAlertInformation(txtSearch.getText());
+        }
+        else if (result.get() == buttonTypeTwo) {
+            // do something
+        }
+    }
+
     public void OnEnter() {
-        if (checkSearchBar()) {
+        if (empty(txtSearch.getText())) {
+            showAlertInformation(txtSearch.getText());
+        }
+        else if (checkSearchBar()) {
             lvWords.getSelectionModel().select(0);
             displaySelected();
         }
-        else showAlert();
+        else showAlertConfirmation();
     }
 
     public void selectLanguage(ActionEvent event) {
