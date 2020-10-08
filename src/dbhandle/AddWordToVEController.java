@@ -44,7 +44,7 @@ public class AddWordToVEController {
             description = txtDescription.getText();
             word = txtVietnamese.getText();
             String explain = txtEnglish.getText();
-            html = word + "\n\n" + explain +"\n\n" + description;
+            html = AddWordToEVController.wordToHtml(word, explain, description, "");
             newWord = new Word(0, word, html, description, "");
             if (newWord != null) {
                 boolean isExisted = false;

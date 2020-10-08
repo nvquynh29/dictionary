@@ -46,12 +46,13 @@ public class AddWordToEVController {
         if (txtEnglish.getText().trim().isEmpty() || txtVietnamese.getText().trim().isEmpty()) {
             showAlert("Bạn phải nhập cả từ tiếng anh và tiếng việt!");
         } else {
-            String word, html;
+            String word, html, vietnamese;
             String description = "", pronounce = "";
             description = txtDescription.getText();
             pronounce = txtPronounce.getText();
             word = txtEnglish.getText();
-            html = word + "\n\n" + description;
+            vietnamese = txtVietnamese.getText();
+            html = wordToHtml(word, vietnamese, description, pronounce);
             newWord = new Word(0, word, html, description, pronounce);
             if (newWord != null) {
                 boolean isExisted = false;
@@ -96,5 +97,10 @@ public class AddWordToEVController {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public static String wordToHtml(String word, String meaning, String description, String pronounce) {
+        String result = "<h1>" + word + "</h1><h3><i>/" + pronounce + "/</i></h3><h2> + " + meaning + "</h2><ul><li>" + description + " </li></ul>";
+        return result;
     }
 }
