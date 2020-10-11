@@ -71,7 +71,6 @@ public class Controller implements Initializable {
         listWords.addAll(words);
         lvWords.getItems().clear();
         lvWords.getItems().addAll(listWords);
-
         lvWords.setCellFactory(param -> new ListCell<Word>() {
              @Override
             protected void updateItem(Word item, boolean empty) {
@@ -259,7 +258,12 @@ public class Controller implements Initializable {
             showAlertInformation(txtSearch.getText());
         }
         else if (result.get() == buttonTypeTwo) {
-            // do something
+            int index = cbLanguage.getSelectionModel().getSelectedIndex();
+            if (index == 0) {
+                addEVHandle();
+            } else {
+                addVEHandle();
+            }
         }
     }
 
@@ -300,7 +304,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void addEVHandle(ActionEvent event) {
+    public void addEVHandle() {
         try {
             Stage newStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/AddWordToEV.fxml"));
@@ -313,7 +317,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void addVEHandle(ActionEvent event) {
+    public void addVEHandle() {
         try {
             Stage newStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/AddWordToVE.fxml"));
@@ -347,7 +351,7 @@ public class Controller implements Initializable {
         }
     }
 
-    public void addDeleteVEHandle(ActionEvent event) {
+    public void addDeleteVEHandle() {
         try {
             Stage newStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/DeleteWordVE.fxml"));
