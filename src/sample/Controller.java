@@ -363,4 +363,30 @@ public class Controller implements Initializable {
             e.printStackTrace();
         }
     }
+
+    public void addUpdateEVHandle() {
+        try {
+            Stage newStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/UpdateWordToEV.fxml"));
+            Scene addScene = new Scene(root);
+            newStage.setScene(addScene);
+            newStage.setTitle("Cập nhật từ điển");
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addUpdateVEHandle() {
+        try {
+            Stage newStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/UpdateWordToVE.fxml"));
+            Scene addScene = new Scene(root);
+            newStage.setScene(addScene);
+            newStage.setTitle("Update dictionary");
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
