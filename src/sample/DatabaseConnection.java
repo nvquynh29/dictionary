@@ -72,4 +72,15 @@ public class DatabaseConnection {
             e.printStackTrace();
         }
     }
+
+    public static void deleteWordDB(String tableName, String word) {
+        Connection conn = DatabaseConnection.ConnectDB();
+        try {
+            Statement statement = conn.createStatement();
+            String sql = "DELETE FROM " + tableName + " WHERE word='" + word + "';";
+            statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }

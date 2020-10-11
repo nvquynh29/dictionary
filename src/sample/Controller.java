@@ -47,7 +47,7 @@ public class Controller implements Initializable {
 
     private static List<Word> dictionaryEV;
     private static List<Word> dictionaryVE;
-    private Stack<Word> listSearched;
+    private static Stack<Word> listSearched;
 
     Connection conn = DatabaseConnection.ConnectDB();
 
@@ -66,7 +66,7 @@ public class Controller implements Initializable {
 
         listSearched = new Stack<>();
     }
-    private void initListView(List<Word> words) {
+    public void initListView(List<Word> words) {
         ObservableList<Word> listWords = FXCollections.observableArrayList();
         listWords.addAll(words);
         lvWords.getItems().clear();
@@ -332,5 +332,31 @@ public class Controller implements Initializable {
 
     public static void setDictionaryVE() {
         dictionaryVE = getDictionary("va");
+    }
+
+    public void addDeleteEVHandle() {
+        try {
+            Stage newStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/DeleteWordEV.fxml"));
+            Scene addScene = new Scene(root);
+            newStage.setScene(addScene);
+            newStage.setTitle("Xóa từ!");
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addDeleteVEHandle(ActionEvent event) {
+        try {
+            Stage newStage = new Stage();
+            Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/DeleteWordVE.fxml"));
+            Scene addScene = new Scene(root);
+            newStage.setScene(addScene);
+            newStage.setTitle("Deleting word");
+            newStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

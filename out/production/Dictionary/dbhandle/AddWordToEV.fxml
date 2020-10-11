@@ -9,7 +9,7 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="514.0" prefWidth="901.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="dbhandle.AddWordToEVController">
    <children>
-      <Label fx:id="lblEnglish" layoutX="45.0" layoutY="71.0" prefHeight="30.0" prefWidth="131.0" text="Tiếng Anh">
+      <Label fx:id="lblEnglish" layoutX="45.0" layoutY="71.0" prefHeight="30.0" prefWidth="131.0" styleClass="Label" text="Tiếng Anh">
          <font>
             <Font name="System Bold" size="14.0" />
          </font>

@@ -29,6 +29,12 @@
                         <MenuItem mnemonicParsing="false" onAction="#addVEHandle" text="Add to VE Dictionary" />
                     </items>
                   </Menu>
+                  <Menu mnemonicParsing="false" text="Delete Word">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#addDeleteEVHandle" text="Delete Word from EV Dictionary" />
+                        <MenuItem mnemonicParsing="false" onAction="#addDeleteVEHandle" text="Delete Word from VE Dictionary" />
+                    </items>
+                  </Menu>
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
