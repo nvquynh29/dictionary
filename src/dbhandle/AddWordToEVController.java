@@ -44,7 +44,8 @@ public class AddWordToEVController {
 
     public void getNewWord(ActionEvent event) {
         if (txtEnglish.getText().trim().isEmpty() || txtVietnamese.getText().trim().isEmpty()) {
-            showAlert("Bạn phải nhập cả từ tiếng anh và tiếng việt!");
+            AlertController.showInfoAlert("Thông báo", null,
+                    "Bạn phải nhập cả từ tiếng anh và tiếng việt!");
         } else {
             String word, html, vietnamese;
             String description = "", pronounce = "";
@@ -69,19 +70,17 @@ public class AddWordToEVController {
                     e.printStackTrace();
                 }
                 if (isExisted == false) {
-                    showAlert("Thêm từ mới thành công!");
+                    AlertController.showInfoAlert("Thông báo", null, "Thêm từ mới thành công!");
                     sample.DatabaseConnection.addWordToDB("av", newWord);
                     Controller.setDictionaryEV();
-                }
-                else {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Xác nhận");
-                    alert.setHeaderText(word);
-                    alert.setContentText("Từ này đã có trong từ điển!\n Bạn có muốn cập nhật?");
+                } else {
+                    AlertController.showConfirmAlert("Xác nhận", word,
+                            "Từ này đã có trong từ điển!\n" + "Bạn có muốn cập nhật?");
+                    Alert alert = AlertController.getAlertConfirm();
                     ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
                     ButtonType buttonAccept = new ButtonType("Xác nhận");
                     alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
-                    Optional <ButtonType> result = alert.showAndWait();
+                    Optional<ButtonType> result = alert.showAndWait();
                     if (result.get() == buttonAccept) {
                         DatabaseConnection.updateWordToDB("av", word, html, description, pronounce);
                         Controller.setDictionaryEV();
@@ -91,16 +90,12 @@ public class AddWordToEVController {
         }
     }
 
-    public void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Thông báo");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
     public static String wordToHtml(String word, String meaning, String description, String pronounce) {
-        String result = "<h1>" + word + "</h1><h3><i>/" + pronounce + "/</i></h3><h2> + " + meaning + "</h2><ul><li>" + description + " </li></ul>";
+        String result = "<h1>" + word
+                + "</h1><h3><i>/" + pronounce
+                + "/</i></h3><h2> + " + meaning
+                + "</h2><ul><li>" + description
+                + " </li></ul>";
         return result;
     }
 }

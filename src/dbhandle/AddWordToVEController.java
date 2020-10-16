@@ -37,7 +37,8 @@ public class AddWordToVEController {
 
     public void addNewWord(ActionEvent event) {
         if (txtEnglish.getText().trim().isEmpty() || txtVietnamese.getText().trim().isEmpty()) {
-            showAlert("Enter word in English and Vietnamese!");
+            AlertController.showInfoAlert("Notification", null,
+                    "Enter word in English and Vietnamese!");
         } else {
             String word, html;
             String description = "";
@@ -61,15 +62,13 @@ public class AddWordToVEController {
                     e.printStackTrace();
                 }
                 if (isExisted == false) {
-                    showAlert("Success!");
+                    AlertController.showInfoAlert("Notification", null, "Success!");
                     sample.DatabaseConnection.addWordToDB("va", newWord);
                     Controller.setDictionaryVE();
-                }
-                else {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Confirmation");
-                    alert.setHeaderText(word);
-                    alert.setContentText("This word has existed!\n Do you want to update it?");
+                } else {
+                    AlertController.showConfirmAlert("Confirmation", word,
+                            "This word has existed!\n" + "Do you want to update it?");
+                    Alert alert = AlertController.getAlertConfirm();
                     ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
                     ButtonType buttonAccept = new ButtonType("Confirm");
                     alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
@@ -81,13 +80,5 @@ public class AddWordToVEController {
                 }
             }
         }
-    }
-
-    public void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Notification");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

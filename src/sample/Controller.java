@@ -1,5 +1,6 @@
 package sample;
 
+import dbhandle.AlertController;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -206,48 +207,40 @@ public class Controller implements Initializable {
     }
 
     private void showAlertInformation(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
         if (mode == 0) {
             if (empty(message)) {
-                alert.setTitle("Alert!");
-                alert.setHeaderText(null);
-                alert.setContentText("Please enter the word!");
+                AlertController.showInfoAlert("Thông Báo!", null,
+                        "Vui lòng nhập từ cần tra!");
             }
             else {
-                alert.setTitle("Translate!");
-                alert.setHeaderText(message.trim());
-                alert.setContentText("Meaning");
+                AlertController.showInfoAlert("Translate!", message.trim(),
+                        "Meaning");
             }
         }
         else {
             if (empty(message)) {
-                alert.setTitle("Thông Báo!");
-                alert.setHeaderText(null);
-                alert.setContentText("Vui lòng nhập từ cần tra!");
+                AlertController.showInfoAlert("Alert!", null,
+                        "Please enter the word!");
             }
             else {
-                alert.setTitle("Translate!");
-                alert.setHeaderText(message.trim());
-                alert.setContentText("Meaning");
+                AlertController.showInfoAlert("Translate!", message.trim(),
+                        "Meaning");
             }
         }
-        alert.showAndWait();
     }
 
     private void showAlertConfirmation() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle("Confirmation Dialog");
-        alert.setHeaderText(txtSearch.getText().trim());
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
         if (mode == 0) {
-            alert.setContentText("This word isn't in dictionary.\n" +
-                    "Choose your option.");
+            AlertController.showConfirmAlert("Confirmation Dialog", txtSearch.getText().trim(),
+                    "Từ này không có trong từ điển.\n" + "Chọn option.");
         }
         else {
-            alert.setContentText("Từ này không có trong từ điển.\n" +
-                    "Chọn option.");
+            AlertController.showConfirmAlert("Confirmation Dialog", txtSearch.getText().trim(),
+                    "This word isn't in dictionary.\n" + "Choose your option.");
         }
+        Alert alert = AlertController.getAlertConfirm();
         ButtonType buttonTypeOne = new ButtonType("Translate");
         ButtonType buttonTypeTwo = new ButtonType("Add to dictionary");
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);

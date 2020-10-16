@@ -22,7 +22,8 @@ public class DeleteWordVEController {
 
     public void deleteWord(ActionEvent event) {
         if (txtDelete.getText().trim().isEmpty()) {
-            showAlert("You haven't entered the word!");
+            AlertController.showInfoAlert("Warning!", null,
+                    "You haven't entered the word!");
         } else {
             String input = txtDelete.getText();
             boolean check = true;
@@ -39,15 +40,8 @@ public class DeleteWordVEController {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-            if (check) showAlert("Word you entered isn't exist!");
+            if (check) AlertController.showInfoAlert("Warning!", null,
+                    "Word you entered isn't exist!");
         }
-    }
-
-    public void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Warning!");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
