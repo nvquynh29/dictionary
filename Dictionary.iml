@@ -17,5 +17,10 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="dist" level="project" />
+    <orderEntry type="library" name="lib1" level="project" />
+    <orderEntry type="library" name="speaker" level="project" />
+    <orderEntry type="library" name="translate" level="project" />
+    <orderEntry type="library" name="jdbc" level="project" />
   </component>
 </module>

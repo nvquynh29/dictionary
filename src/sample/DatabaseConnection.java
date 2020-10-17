@@ -2,6 +2,8 @@ package sample;
 
 import java.awt.*;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseConnection {
     public static Connection conn = null;
@@ -31,12 +33,60 @@ public class DatabaseConnection {
         return rs;
     }
 
+    public static List<Word> getDictionary(String tableName) {
+
+        List<Word> result = new ArrayList<>();
+
+        if (DatabaseConnection.isConnected()) {
+            try {
+                ResultSet rs = DatabaseConnection.getResultSet(tableName);
+                while (rs.next()) {
+                    int id = rs.getInt("id");
+                    String word = rs.getString("word");
+                    String html = rs.getString("html");
+                    String description = rs.getString("description");
+                    String pronounce = rs.getString("pronounce");
+
+                    Word newWord = new Word(id, word, html, description, pronounce);
+                    result.add(newWord);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println("Error while load database!");
+            System.exit(1);
+        }
+        return result;
+    }
+
+    // Sửa lại sau khi dùng trie
+    public static boolean isContains(String tableName, Word word) {
+        String wordTarget = word.getWordTarget();
+        try {
+            ResultSet rs = DatabaseConnection.getResultSet("av");
+            while (rs.next()) {
+                String str = rs.getString("word");
+                if (str.equals(wordTarget)) {
+                    return true;
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return false;
+    }
+
     public static int getTableSize(String tableName) throws SQLException {
         ResultSet rs = DatabaseConnection.getResultSet(tableName);
-        ;
         int size = 0;
+
+        /**
+         * SQLite not support: rs.last().
+         * Replace with this loop.
+         */
         while (rs.next()) {
-            size++;
+            size = rs.getInt(1);
         }
         return size;
     }
@@ -46,11 +96,7 @@ public class DatabaseConnection {
         try {
             Statement statement = conn.createStatement();
             int size = DatabaseConnection.getTableSize(tableName);
-            if (tableName.equals("av")) {
-                word.setId(size + 1);
-            } else {
-                word.setId(size + 4);
-            }
+            word.setId(size + 1);
             String sql = "INSERT INTO " + tableName + " (id, word, html, description, pronounce) VALUES ("
                     + word.getId() + ", '" + word.getWordTarget() + "', '" + word.getHtml()
                     + "', '" + word.getDescription() + "', '" + word.getPronounce() + "')";
@@ -64,7 +110,7 @@ public class DatabaseConnection {
         Connection conn = DatabaseConnection.ConnectDB();
         try {
             Statement statement = conn.createStatement();
-            String sql = " UPDATE " + tableName + " SET html = '" + html + "' ,description = '" + description
+            String sql = "UPDATE " + tableName + " SET html = '" + html + "' ,description = '" + description
                     + "' ,pronounce = '" + pronounce + "' WHERE word = '" + word + "'";
             statement.executeUpdate(sql);
 

@@ -25,24 +25,40 @@
             <items>
                   <Menu mnemonicParsing="false" text="Add Word">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#addEVHandle" text="Add to EV Dictionary" />
-                        <MenuItem mnemonicParsing="false" onAction="#addVEHandle" text="Add to VE Dictionary" />
+                      <MenuItem mnemonicParsing="false" onAction="#addWordEV" text="Add to EV Dictionary" />
+                        <MenuItem mnemonicParsing="false" onAction="#addWordVE" text="Add to VE Dictionary" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Delete Word">
                     <items>
-                      <MenuItem mnemonicParsing="false" onAction="#addDeleteEVHandle" text="Delete Word from EV Dictionary" />
-                        <MenuItem mnemonicParsing="false" onAction="#addDeleteVEHandle" text="Delete Word from VE Dictionary" />
+                      <MenuItem mnemonicParsing="false" onAction="#deleteWordEV" text="Delete Word from EV Dictionary" />
+                        <MenuItem mnemonicParsing="false" onAction="#deleteWordVE" text="Delete Word from VE Dictionary" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Update Word">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#addUpdateEVHandle" text="Update Word from EV Dictionary" />
-                        <MenuItem mnemonicParsing="false" onAction="#addUpdateVEHandle" text="Update Word from VE Dictionary" />
+                        <MenuItem mnemonicParsing="false" onAction="#updateWordEV" text="Update Word from EV Dictionary" />
+                        <MenuItem mnemonicParsing="false" onAction="#updateWordVE" text="Update Word from VE Dictionary" />
                     </items>
                   </Menu>
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Advanced">
+               <items>
+                  <Menu mnemonicParsing="false" text="Translate">
+                    <items>
+                      <MenuItem mnemonicParsing="false" text="English to Vietnamese" />
+                        <MenuItem mnemonicParsing="false" text="Vietnamese to English" />
+                    </items>
+                  </Menu>
+                  <Menu mnemonicParsing="false" text="Image to Text">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#getTextEnglish" text="English" />
+                        <MenuItem mnemonicParsing="false" onAction="#getTextVietnamese" text="Vietnamese" />
+                    </items>
+                  </Menu>
+               </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />
@@ -54,8 +70,8 @@
    <left>
       <AnchorPane prefHeight="575.0" prefWidth="900.0" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="txtSearch" layoutX="64.0" layoutY="32.0" onAction="#OnEnter" onKeyReleased="#KeyPress" prefHeight="40.0" prefWidth="698.0" />
-            <Button fx:id="btnBack" layoutX="14.0" layoutY="32.0" mnemonicParsing="false" onMouseClicked="#backButtonHandler" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #0075F5;" text="←" textFill="WHITE">
+            <TextField fx:id="txtSearch" layoutX="64.0" layoutY="32.0" onAction="#OnEnter" onKeyReleased="#searchWord" prefHeight="40.0" prefWidth="698.0" />
+            <Button fx:id="btnBack" layoutX="14.0" layoutY="32.0" mnemonicParsing="false" onMouseClicked="#backButtonHandle" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #0075F5;" text="←" textFill="WHITE">
                <font>
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
@@ -63,7 +79,7 @@
             <ListView fx:id="lvWords" layoutX="14.0" layoutY="81.0" onMouseClicked="#displaySelected" prefHeight="481.0" prefWidth="225.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="84.0" />
             <WebView fx:id="webView" layoutX="268.0" layoutY="81.0" prefHeight="480.0" prefWidth="609.0" />
             <ComboBox fx:id="cbLanguage" layoutX="694.0" layoutY="2.0" onAction="#selectLanguage" prefHeight="25.0" prefWidth="161.0" />
-            <Button fx:id="btnSpeaker" layoutX="775.0" layoutY="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" />
+            <Button fx:id="btnSpeaker" layoutX="775.0" layoutY="32.0" mnemonicParsing="false" onAction="#speak" prefHeight="32.0" prefWidth="32.0" />
             <Button fx:id="btnVoice" layoutX="830.0" layoutY="32.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="32.0" />
          </children>
       </AnchorPane>
