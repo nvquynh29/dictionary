@@ -22,7 +22,8 @@ public class DeleteWordEVController {
 
     public void deleteWord(ActionEvent event) {
         if (txtDelete.getText().trim().isEmpty()) {
-            showAlert("Bạn chưa nhập từ!");
+            AlertController.showInfoAlert("Thông báo!", null,
+                    "Bạn chưa nhập từ!");
         } else {
             String input = txtDelete.getText();
             boolean check = true;
@@ -39,15 +40,8 @@ public class DeleteWordEVController {
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
-            if (check) showAlert("Từ bạn nhập không tồn tại!");
+            if (check) AlertController.showInfoAlert("Thông báo!", null,
+                    "Từ bạn nhập không tồn tại!");
         }
-    }
-
-    public void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Cảnh báo1");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

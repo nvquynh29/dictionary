@@ -37,7 +37,8 @@ public class UpdateWordToVEController {
 
     public void updateNewWord(ActionEvent event) {
         if (txtEnglish.getText().trim().isEmpty() || txtVietnamese.getText().trim().isEmpty()) {
-            showAlert("Enter word in English and Vietnamese!");
+            AlertController.showInfoAlert("Thông báo!", null,
+                    "Enter word in English and Vietnamese!");
         } else {
             String word, html;
             String description = "";
@@ -61,13 +62,12 @@ public class UpdateWordToVEController {
                     e.printStackTrace();
                 }
                 if (isExisted == false) {
-                    showAlert("This word isn't in the dictionary!");
-                }
-                else {
-                    Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-                    alert.setTitle("Confirmation");
-                    alert.setHeaderText(word);
-                    alert.setContentText("Do you really want to update it?");
+                    AlertController.showInfoAlert("Thông báo!", null,
+                            "This word isn't in the dictionary!");
+                } else {
+                    AlertController.showConfirmAlert("Confirmation", word,
+                            "This word has existed!\n" + "Do you want to update it?");
+                    Alert alert = AlertController.getAlertConfirm();
                     ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
                     ButtonType buttonAccept = new ButtonType("Confirm");
                     alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
@@ -79,13 +79,5 @@ public class UpdateWordToVEController {
                 }
             }
         }
-    }
-
-    public void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Notification");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
