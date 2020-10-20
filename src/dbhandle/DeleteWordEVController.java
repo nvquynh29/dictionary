@@ -28,11 +28,8 @@ public class DeleteWordEVController {
             if (DatabaseConnection.isContains("av", word)) {
                 AlertController.showConfirmAlert("Xác nhận", "Bạn có chắc muốn xóa từ này?", null);
                 Alert alert = AlertController.getAlertConfirm();
-                ButtonType buttonCancel = new ButtonType("Hủy", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType buttonAccept = new ButtonType("Xác nhận");
-                alert.getButtonTypes().setAll(buttonAccept, buttonCancel);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get().equals(buttonAccept)) {
+                if (result.get() == ButtonType.OK) {
                     DatabaseConnection.deleteWordDB("av", word);
                 }
             } else {

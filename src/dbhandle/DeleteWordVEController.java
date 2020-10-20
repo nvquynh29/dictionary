@@ -28,11 +28,8 @@ public class DeleteWordVEController {
             if (DatabaseConnection.isContains("va", word)) {
                 AlertController.showConfirmAlert("Confirmation", "Delete this word?", null);
                 Alert alert = AlertController.getAlertConfirm();
-                ButtonType buttonCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType buttonAccept = new ButtonType("OK");
-                alert.getButtonTypes().setAll(buttonAccept, buttonCancel);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get().equals(buttonAccept)) {
+                if (result.get() == ButtonType.OK) {
                     DatabaseConnection.deleteWordDB("va", word);
                 }
             } else {

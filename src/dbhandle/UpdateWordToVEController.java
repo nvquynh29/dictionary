@@ -50,11 +50,8 @@ public class UpdateWordToVEController {
             if (DatabaseConnection.isContains("va", word)) {
                 AlertController.showConfirmAlert("Confirmation", "Update this word?", null);
                 Alert alert = AlertController.getAlertConfirm();
-                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType buttonAccept = new ButtonType("OK");
-                alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonAccept) {
+                if (result.get() == ButtonType.OK) {
                     DatabaseConnection.updateWordToDB("va", word, html, description, "");
                 }
             } else {

@@ -58,11 +58,8 @@ public class AddWordToEVController {
                 AlertController.showConfirmAlert("Xác nhận", "Từ này đã có trong từ điển!\n"
                         + "Bạn có muốn cập nhật?", null);
                 Alert alert = AlertController.getAlertConfirm();
-                ButtonType buttonCancel = new ButtonType("Hủy", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType buttonAccept = new ButtonType("Xác nhận");
-                alert.getButtonTypes().setAll(buttonAccept, buttonCancel);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get().equals(buttonAccept)) {
+                if (result.get() == ButtonType.OK) {
                     DatabaseConnection.updateWordToDB("av", word, html, description, pronounce);
                 }
             } else {

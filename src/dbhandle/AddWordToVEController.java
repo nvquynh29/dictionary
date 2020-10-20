@@ -51,11 +51,8 @@ public class AddWordToVEController {
                 AlertController.showConfirmAlert("Confirmation", "This word has existed!\n"
                         + "Do you want to update it?", null);
                 Alert alert = AlertController.getAlertConfirm();
-                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType buttonAccept = new ButtonType("Confirm");
-                alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get().equals(buttonAccept)) {
+                if (result.get() == ButtonType.OK) {
                     DatabaseConnection.updateWordToDB("va", word, html, description, "");
                 }
             } else {

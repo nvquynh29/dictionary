@@ -57,11 +57,8 @@ public class UpdateWordToEVController {
             if (DatabaseConnection.isContains("av", word)) {
                 AlertController.showConfirmAlert("Xác nhận", "Bạn có chắc muốn cập nhật?", null);
                 Alert alert = AlertController.getAlertConfirm();
-                ButtonType buttonTypeCancel = new ButtonType("Hủy", ButtonBar.ButtonData.CANCEL_CLOSE);
-                ButtonType buttonAccept = new ButtonType("Xác nhận");
-                alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
                 Optional<ButtonType> result = alert.showAndWait();
-                if (result.get() == buttonAccept) {
+                if (result.get() == ButtonType.OK) {
                     DatabaseConnection.updateWordToDB("av", word, html, description, pronounce);
                 }
             } else {
