@@ -1,95 +1,121 @@
 package sample;
 
-import java.util.ArrayList;
-import java.util.List;
-
-class TrieNode {
-    // Alphabet size (# of symbols)
-    static final int ALPHABET_SIZE = 26;
-    TrieNode[] children = new TrieNode[ALPHABET_SIZE];
-
-    // isEndOfWord is true if the node represents
-    // end of a word
-    boolean isEndOfWord;
-
-    public TrieNode(){
-        isEndOfWord = false;
-        for (int i = 0; i < ALPHABET_SIZE; i++)
-            children[i] = null;
-    }
-
-    public boolean isEmpty() {
-        if (this == null)
-            return true;
-        for (int i = 0; i < ALPHABET_SIZE; ++i) {
-            if (this.children[i] != null) {
-                return false;
-            }
-        }
-        return true;
-    }
-}
+import java.util.*;
 
 public class Trie {
-    static final int ALPHABET_SIZE = 26;
-    private TrieNode root = new TrieNode();
+    private class TrieNode {
+        boolean isEndOfWord;
+        Map<Character, TrieNode> children;  //Value(TrieNode): child of this node
+        String html;
+
+        TrieNode() {
+            this.isEndOfWord = false;
+            this.children = new HashMap<>();
+            this.html = "";
+        }
+    }
+
+    //Class Trie
+    private TrieNode root;
+    List<String> result = new ArrayList<>();
+
+    public Trie() {
+        root = new TrieNode();
+    }
+
+    public Trie(TrieNode root) {
+        this.root = root;
+    }
 
     public TrieNode getRoot() {
         return root;
     }
 
-    // If not present, inserts key into trie
-    // If the key is prefix of trie node,
-    // just marks leaf node
-    public void insert(String key)
-    {
-        int level;
-        int length = key.length();
-        int index;
-
-        TrieNode iterator = root;
-
-        for (level = 0; level < length; level++)
-        {
-            index = key.charAt(level) - 'a';
-            if (iterator.children[index] == null)
-                iterator.children[index] = new TrieNode();
-
-            iterator = iterator.children[index];
-        }
-
-        // mark last node as leaf
-        iterator.isEndOfWord = true;
+    public void setRoot(TrieNode root) {
+        this.root = root;
     }
 
-    // Returns true if key presents in trie, else false
-    public boolean search(String key)
-    {
-        int level;
-        int length = key.length();
-        int index;
-        TrieNode iterator = root;
-
-        for (level = 0; level < length; level++)
-        {
-            index = key.charAt(level) - 'a';
-
-            if (iterator.children[index] == null)
-                return false;
-
-            iterator = iterator.children[index];
+    public String combineChars(char[] chars, int level) {
+        StringBuilder sb = new StringBuilder("");
+        for (int i = 0; i < level; ++i) {
+            sb.append(chars[i]);
         }
-
-        return (iterator != null && iterator.isEndOfWord);
+        return sb.toString();
     }
 
-    public boolean isEmpty() {
-        for (int i = 0; i < ALPHABET_SIZE; ++i) {
-            if (root.children[i] != null) {
-                return false;
+
+    //char[] : them cac ky tu khi duyet, sau do xoa neu can
+    public List<String> getAllWord(TrieNode parent, char[] chars, int level, String prefix) {
+        if (parent != null) {
+            if (parent.isEndOfWord) {
+                String word = combineChars(chars, level);
+                if (prefix.equals("")) {
+                    result.add(word);
+                } else {
+                    result.add(prefix + word);
+                }
+            }
+            Map<Character, TrieNode> children = parent.children;
+            if (children.size() > 0) {
+                //Set = Unsorted List
+                Set<Character> keys = children.keySet();
+                //Sort list chars
+                List<Character> arr = new ArrayList<>(keys);
+                Collections.sort(arr);
+
+                for (char ch : arr) {
+                    chars[level] = ch;
+                    getAllWord(children.get(ch), chars, level + 1, prefix);
+                }
             }
         }
-        return true;
+        return result;
+    }
+
+    /** Inserts a word into the trie. */
+    public void insert(String word, String html) {
+        if (word == null || word.length() == 0 || search(word)) {
+            return;
+        }
+
+        TrieNode iterator = root;
+        for (int i = 0; i < word.length(); i++) {
+            char cur = word.charAt(i);
+
+            TrieNode child = iterator.children.get(cur); // Check if having a TrieNode associated with 'cur'
+            if (child == null) {
+                child = new TrieNode();
+                iterator.children.put(cur, child);
+            }
+            iterator = child; // Navigate to next level
+        }
+
+        iterator.isEndOfWord = true;
+        iterator.html = html;
+    }
+
+    /**
+     * Returns true if the word is in the trie.
+     * @param word - word to search.
+     * @return true if its trie contains word
+     */
+    public boolean search(String word) {
+        if (word == null) { // Assume that empty string is in the trie
+            return false;
+        }
+        TrieNode iterator = root;
+
+        for (int i = 0; i < word.length(); i++) {
+            char cur = word.charAt(i);
+
+            TrieNode child = iterator.children.get(cur); // Check if having a TrieNode associated with 'cur'
+            if (child == null) { // null if 'word' is way too long or its prefix doesn't appear in the Trie
+                return false;
+            }
+
+            iterator = child; // Navigate to next level
+        }
+        return iterator.isEndOfWord;
     }
 
     public int size(TrieNode node) {
@@ -97,112 +123,80 @@ public class Trie {
         if (node.isEndOfWord) {
             result++;
         }
-
-        for (int i = 0; i < ALPHABET_SIZE; ++i) {
-            if (node.children[i] != null) {
-                result += size(node.children[i]);
-            }
+        Map<Character, TrieNode> children = node.children;
+        for (Map.Entry<Character, TrieNode> entry : children.entrySet()) {
+            result += size(entry.getValue());
         }
         return result;
     }
 
-
-    public void display(TrieNode node, char[] str, int level) {
-        if (node == null) {
-            return;
+    public String getHtml(String word) {
+        if (root == null) {
+            return "";
         }
-        if (node.isEndOfWord) {
-            System.out.println(combineChars(str, level));
-        }
-
-        //Duyệt hết các nút từ a-z, ở mỗi nút đều duyệt tiếp bằng đệ quy
-        for (int i = 0; i < ALPHABET_SIZE; ++i) {
-            if (node.children[i] != null) {
-                str[level] = (char) (i + 'a');
-                display(node.children[i], str, level + 1);
+        if (search(word)) {
+            TrieNode iterator = root;
+            for (int i = 0; i < word.length(); ++i) {
+                char key = word.charAt(i);
+                iterator = iterator.children.get(key);
             }
+            return iterator.html;
         }
+        return "";
     }
 
-    //Remove node
-    public void remove(TrieNode node, String key, int depth) {
-        // If tree is empty
-        if (node == null || this.isEmpty())
-            return;
-
-        // If last character of key is being processed
-        if (depth == key.length()) {
-
-            // This node is no more end of word after
-            // removal of given key
-            if (node.isEndOfWord) {
-                node.isEndOfWord = false;
+    /** Returns true if there is any word in the trie that starts with the given prefix. */
+    public List<String> startsWith(TrieNode node, String prefix) {
+        int level = prefix.length();
+        for (int i = 0; i < level; ++i) {
+            TrieNode child = node.children.get(prefix.charAt(i));
+            if (child == null) {
+                return null;
             }
-            return;
+            node = child;
         }
-
-        // If not last character, recur for the child
-        // obtained using ASCII value
-        int index = key.charAt(depth) - 'a';
-        remove(node.children[index], key, depth + 1);
-
-        // If root does not have any child (its only child got
-        // deleted), and it is not end of another word.
-        if (node.isEmpty() && root.isEndOfWord == false) {
-            node = null;
-        }
-    }
-
-    public String combineChars(char[] str, int n) {
-        StringBuilder sb = new StringBuilder("");
-        for (int i = 0; i < n; ++i) {
-            sb.append(str[i]);
-        }
-        return sb.toString();
-    }
-
-    public List<String> getSortedList(TrieNode node, char[] str, int level) {
-        List<String> result = new ArrayList<>();
-        if (node != null) {
-            if (node.isEndOfWord) {
-                String word = combineChars(str, level);
-                result.add(word);
-            }
-
-            for (int i = 0; i < ALPHABET_SIZE; ++i) {
-                if (node.children[i] != null) {
-                    str[level] = (char) (i + 'a');
-                    display(node.children[i], str, level + 1);
-                }
-            }
-        }
+        result.clear();
+        getAllWord(node, new char[100], 0, prefix);
         return result;
     }
 
-    //currPrefix: prefix each recursive call
-    public List<String> getMatchesPrefix(TrieNode node, String currPrefix) {
-        List<String> result = new ArrayList<>();
-        // found a string in Trie with the given prefix
-        if (node != null) {
-            if (node.isEndOfWord)
-            {
-                result.add(currPrefix);
-            }
-            for (int i = 0; i < ALPHABET_SIZE; i++)
-            {
-                if (node.children[i] != null)
-                {
-                    // append current character to currPrefix string
-                    char ch = (char) (i + 'a');
-                    currPrefix += ch;
-
-                    // recur over the rest
-                    getMatchesPrefix(node.children[i], currPrefix);
-                    // remove last character (char at node children[i])
-                    currPrefix = currPrefix.substring(0, currPrefix.length());
-                }
-            }
+    /** Deletes a word from the trie if present, and return true if the word is deleted successfully. */
+    public boolean delete(String word) {
+        if (word == null || word.length() == 0) {
+            return false;
         }
-        return result;
+
+        // All nodes below 'deleteBelow' and on the path starting with 'deleteChar' (including itself) will be deleted if needed
+        TrieNode deleteBelow = null;
+        char deleteChar = '\0';
+
+        // Search to ensure word is present
+        TrieNode iterator = root;
+        for (int i = 0; i < word.length(); ++i) {
+            char cur = word.charAt(i);
+
+            TrieNode child = iterator.children.get(cur); // Check if having a TrieNode associated with 'cur'
+            if (child == null) { // null if 'word' is way too long or its prefix doesn't appear in the Trie
+                return false;
+            }
+
+            if (iterator.children.size() > 1 || iterator.isEndOfWord) { // Update 'deleteBelow' and 'deleteChar'
+                deleteBelow = iterator;
+                deleteChar = cur;
+            }
+
+            iterator = child;
+        }
+
+        if (!iterator.isEndOfWord) { // word isn't in trie
+            return false;
+        }
+
+        if (iterator.children.isEmpty()) {
+            deleteBelow.children.remove(deleteChar);
+        } else {
+            iterator.isEndOfWord = false; // Delete word by mark it as not the end of a word
+        }
+        return true;
     }
 }

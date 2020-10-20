@@ -3,6 +3,8 @@ package dbhandle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
+import sample.Controller;
 import sample.DatabaseConnection;
 import sample.Word;
 
@@ -40,7 +42,7 @@ public class AddWordToEVController {
 
     public Word newWord;
 
-    public void getNewWord(ActionEvent event) {
+    public void addNewWord(ActionEvent event) {
         if (txtEnglish.getText().trim().isEmpty() || txtVietnamese.getText().trim().isEmpty()) {
             AlertController.showInfoAlert("Thông báo", null,
                     "Bạn phải nhập cả từ tiếng anh và tiếng việt!");
@@ -52,73 +54,27 @@ public class AddWordToEVController {
             word = txtEnglish.getText();
             vietnamese = txtVietnamese.getText();
             html = AddWordToEVController.wordToHtml(word, vietnamese, description, pronounce);
-            newWord = new Word(0, word, html, description, pronounce);
-<<<<<<< HEAD
-            boolean contains =  DatabaseConnection.isContains("av", newWord);
-            if (!contains) {
-                DatabaseConnection.addWordToDB("av", newWord);
+            if (DatabaseConnection.isContains("av", word)) {
+                AlertController.showConfirmAlert("Xác nhận", "Từ này đã có trong từ điển!\n"
+                        + "Bạn có muốn cập nhật?", null);
+                Alert alert = AlertController.getAlertConfirm();
+                ButtonType buttonCancel = new ButtonType("Hủy", ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType buttonAccept = new ButtonType("Xác nhận");
+                alert.getButtonTypes().setAll(buttonAccept, buttonCancel);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get().equals(buttonAccept)) {
+                    DatabaseConnection.updateWordToDB("av", word, html, description, pronounce);
+                }
             } else {
-                //Show Confirm Alert
-=======
-            if (newWord != null) {
-                boolean isExisted = false;
-                try {
-                    ResultSet rs = DatabaseConnection.getResultSet("av");
-                    while (rs.next()) {
-                        String wordTarget = rs.getString("word");
-                        if (wordTarget.equals(word)) {
-                            isExisted = true;
-                            break;
-                        }
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                if (isExisted == false) {
-                    AlertController.showInfoAlert("Thông báo", null, "Thêm từ mới thành công!");
-                    sample.DatabaseConnection.addWordToDB("av", newWord);
-                    Controller.setDictionaryEV();
-                } else {
-                    AlertController.showConfirmAlert("Xác nhận", word,
-                            "Từ này đã có trong từ điển!\n" + "Bạn có muốn cập nhật?");
-                    Alert alert = AlertController.getAlertConfirm();
-                    ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType buttonAccept = new ButtonType("Xác nhận");
-                    alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == buttonAccept) {
-                        DatabaseConnection.updateWordToDB("av", word, html, description, pronounce);
-                        Controller.setDictionaryEV();
-                    }
-                }
->>>>>>> 4e4a6bfa66b2698475c575cae668ce4c667823bf
+                DatabaseConnection.addWordToDB("av", word, html, description, pronounce);
+                AlertController.showInfoAlert("Thông báo", null, "Thêm từ mới thành công!");
             }
+            Controller.trieEV.insert(word, html);
+            Stage current = (Stage) txtEnglish.getScene().getWindow();
+            current.close();
         }
     }
 
-<<<<<<< HEAD
-    public void showAlert(String message) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Thông báo");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    public void showConfirmAlert(String title, String mess) {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(mess);
-
-        ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        ButtonType buttonAccept = new ButtonType("Xác nhận");
-        alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
-        Optional<ButtonType> result = alert.showAndWait();
-    }
-
-=======
->>>>>>> 4e4a6bfa66b2698475c575cae668ce4c667823bf
     public static String wordToHtml(String word, String meaning, String description, String pronounce) {
         String result = "<h1>" + word
                 + "</h1><h3><i>/" + pronounce

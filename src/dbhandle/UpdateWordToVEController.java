@@ -3,6 +3,7 @@ package dbhandle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 import sample.Controller;
 import sample.DatabaseConnection;
 import sample.Word;
@@ -46,38 +47,22 @@ public class UpdateWordToVEController {
             word = txtVietnamese.getText();
             String explain = txtEnglish.getText();
             html = AddWordToEVController.wordToHtml(word, explain, description, "");
-            newWord = new Word(0, word, html, description, "");
-            if (newWord != null) {
-                boolean isExisted = false;
-                try {
-                    ResultSet rs = DatabaseConnection.getResultSet("va");
-                    while (rs.next()) {
-                        String wordTarget = rs.getString("word");
-                        if (wordTarget.equals(word)) {
-                            isExisted = true;
-                            break;
-                        }
-                    }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+            if (DatabaseConnection.isContains("va", word)) {
+                AlertController.showConfirmAlert("Confirmation", "Update this word?", null);
+                Alert alert = AlertController.getAlertConfirm();
+                ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType buttonAccept = new ButtonType("OK");
+                alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get() == buttonAccept) {
+                    DatabaseConnection.updateWordToDB("va", word, html, description, "");
                 }
-                if (isExisted == false) {
-                    AlertController.showInfoAlert("Thông báo!", null,
-                            "This word isn't in the dictionary!");
-                } else {
-                    AlertController.showConfirmAlert("Confirmation", word,
-                            "This word has existed!\n" + "Do you want to update it?");
-                    Alert alert = AlertController.getAlertConfirm();
-                    ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-                    ButtonType buttonAccept = new ButtonType("Confirm");
-                    alert.getButtonTypes().setAll(buttonAccept, buttonTypeCancel);
-                    Optional<ButtonType> result = alert.showAndWait();
-                    if (result.get() == buttonAccept) {
-                        DatabaseConnection.updateWordToDB("va", word, html, description, "");
-                        Controller.setDictionaryVE();
-                    }
-                }
+            } else {
+                AlertController.showInfoAlert("Notification", "This word isn't in the dictionary!", null);
             }
+            Controller.trieVE.insert(word, html);
+            Stage current = (Stage) txtEnglish.getScene().getWindow();
+            current.close();
         }
     }
 }

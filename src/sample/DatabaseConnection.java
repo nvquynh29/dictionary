@@ -33,48 +33,31 @@ public class DatabaseConnection {
         return rs;
     }
 
-    public static List<Word> getDictionary(String tableName) {
-
-        List<Word> result = new ArrayList<>();
-
+    public static Trie getTrie(String tableName) {
+        Trie trie = new Trie();
         if (DatabaseConnection.isConnected()) {
             try {
                 ResultSet rs = DatabaseConnection.getResultSet(tableName);
                 while (rs.next()) {
-                    int id = rs.getInt("id");
                     String word = rs.getString("word");
                     String html = rs.getString("html");
-                    String description = rs.getString("description");
-                    String pronounce = rs.getString("pronounce");
-
-                    Word newWord = new Word(id, word, html, description, pronounce);
-                    result.add(newWord);
+                    trie.insert(word.toLowerCase(), html);
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-        } else {
-            System.out.println("Error while load database!");
-            System.exit(1);
         }
-        return result;
+        return trie;
     }
 
-    // Sửa lại sau khi dùng trie
-    public static boolean isContains(String tableName, Word word) {
-        String wordTarget = word.getWordTarget();
-        try {
-            ResultSet rs = DatabaseConnection.getResultSet("av");
-            while (rs.next()) {
-                String str = rs.getString("word");
-                if (str.equals(wordTarget)) {
-                    return true;
-                }
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
+    public static boolean isContains(String tableName, String word) {
+        Trie trie;
+        if (tableName.equals("av")) {
+            trie = Controller.trieEV;
+        } else {
+            trie = Controller.trieVE;
         }
-        return false;
+        return trie.search(word);
     }
 
     public static int getTableSize(String tableName) throws SQLException {
@@ -91,15 +74,14 @@ public class DatabaseConnection {
         return size;
     }
 
-    public static void addWordToDB(String tableName, Word word) {
+    public static void addWordToDB(String tableName, String word, String html, String description, String pronounce) {
         Connection conn = DatabaseConnection.ConnectDB();
         try {
             Statement statement = conn.createStatement();
             int size = DatabaseConnection.getTableSize(tableName);
-            word.setId(size + 1);
             String sql = "INSERT INTO " + tableName + " (id, word, html, description, pronounce) VALUES ("
-                    + word.getId() + ", '" + word.getWordTarget() + "', '" + word.getHtml()
-                    + "', '" + word.getDescription() + "', '" + word.getPronounce() + "')";
+                    + (size + 1) + ", '" + word + "', '" + html
+                    + "', '" + description + "', '" + pronounce + "')";
             statement.executeUpdate(sql);
         } catch (SQLException throwables) {
             throwables.printStackTrace();

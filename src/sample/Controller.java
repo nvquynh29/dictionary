@@ -15,6 +15,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -39,7 +41,7 @@ public class Controller implements Initializable {
     TextField txtSearch;
 
     @FXML
-    ListView<Word> lvWords;
+    ListView<String> lvWords;
 
     @FXML
     ComboBox<String> cbLanguage;
@@ -47,19 +49,12 @@ public class Controller implements Initializable {
     @FXML
     WebView webView;
 
-    private static List<Word> dictionaryEV;
-    private static List<Word> dictionaryVE;
-    private static Stack<Word> stackSearched;
+    public static Trie trieEV;
+    public static Trie trieVE;
+    private Trie currentTrie;
+    private static Stack<String> stackSearched;
 
     Connection conn = DatabaseConnection.ConnectDB();
-
-    public static void setDictionaryEV() {
-        dictionaryEV = DatabaseConnection.getDictionary("av");
-    }
-
-    public static void setDictionaryVE() {
-        dictionaryVE = DatabaseConnection.getDictionary("va");
-    }
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -68,30 +63,36 @@ public class Controller implements Initializable {
 
     // Initialize all component
     public void initComponent() {
-        dictionaryEV = DatabaseConnection.getDictionary("av");
-        dictionaryVE = DatabaseConnection.getDictionary("va");
-        initListView(dictionaryEV);
+        trieEV = DatabaseConnection.getTrie("av");
+        trieVE = DatabaseConnection.getTrie("va");
+
+        initListView(getTrieData(trieEV));
+        currentTrie = trieEV;
         initButton();
         initComboBox();
         stackSearched = new Stack<>();
     }
-    public void initListView(List<Word> words) {
-        ObservableList<Word> listWords = FXCollections.observableArrayList();
-        listWords.addAll(words);
-        lvWords.getItems().clear();
-        lvWords.getItems().addAll(listWords);
-        lvWords.setCellFactory(param -> new ListCell<Word>() {
-             @Override
-            protected void updateItem(Word item, boolean empty) {
-                super.updateItem(item, empty);
 
-                if (empty || item == null || item.getWordTarget() == null) {
-                    setText(null);
-                } else {
-                    setText(item.getWordTarget());
-                }
-            }
-        });
+    public void initListView(List<String> words) {
+        ObservableList<String> listWords = FXCollections.observableArrayList();
+        if (words != null) {
+            listWords.addAll(words);
+            lvWords.getItems().clear();
+            lvWords.getItems().addAll(listWords);
+        } else {
+            lvWords.getItems().clear();
+        }
+    }
+
+    public Trie getDisplayTrie() {
+        if (cbLanguage.getSelectionModel().getSelectedIndex() == 0) {
+            return trieEV;
+        }
+        return trieVE;
+    }
+
+    public List<String> getTrieData(Trie trie) {
+        return trie.getAllWord(trie.getRoot(), new char[100], 0, "");
     }
 
     public void initButton() {
@@ -120,95 +121,28 @@ public class Controller implements Initializable {
         cbLanguage.getSelectionModel().select(0);
     }
 
-
-//    public static List<Word> getDictionary(String tableName) {
-//
-//        List<Word> result = new ArrayList<>();
-//
-//        if (DatabaseConnection.isConnected()) {
-//            try {
-//                ResultSet rs = DatabaseConnection.getResultSet(tableName);
-//                while (rs.next()) {
-//                    int id = rs.getInt("id");
-//                    String word = rs.getString("word");
-//                    String html = rs.getString("html");
-//                    String description = rs.getString("description");
-//                    String pronounce = rs.getString("pronounce");
-//
-//                    Word newWord = new Word(id, word, html, description, pronounce);
-//                    result.add(newWord);
-//                }
-//            } catch (SQLException e) {
-//                e.printStackTrace();
-//            }
-//        } else {
-//            System.out.println("Error while load database!");
-//            System.exit(1);
-//        }
-//        return result;
-//    }
-
     public void displaySelected() {
-        Word wordSelected = lvWords.getSelectionModel().getSelectedItem();
-        txtSearch.setText(wordSelected.getWordTarget());
-        if (wordSelected != null) {
-            WebEngine webEngine = webView.getEngine();
-            String html = wordSelected.getHtml();
-            webEngine.loadContent(html);
+        String wordSelected = lvWords.getSelectionModel().getSelectedItem();
+        Trie trie = getDisplayTrie();
+        String html = trie.getHtml(wordSelected);
+        txtSearch.setText(wordSelected);
+        WebEngine webEngine = webView.getEngine();
+        webEngine.loadContent(html);
 
-            //update Stack wordSelected and add condition to enable btnBack
-            if (stackSearched.size() == 0 || wordSelected != stackSearched.lastElement()) {
-                stackSearched.push(wordSelected);
-            }
-            if (stackSearched.size() > 1) {
-                btnBack.setDisable(false);
-            }
+        //Stack searched
+        if (stackSearched.size() == 0 || wordSelected != stackSearched.lastElement()) {
+            stackSearched.push(wordSelected);
+        }
+        if (stackSearched.size() > 1) {
+            btnBack.setDisable(false);
         }
     }
 
     public void searchWord() {
-        String keyWord = txtSearch.getText().trim();
-        ArrayList<Word> result = new ArrayList<>();
-        int mode = cbLanguage.getSelectionModel().getSelectedIndex();
-        if (mode == 0) {
-            for (Word temp : dictionaryEV) {
-                String thisWord = temp.getWordTarget();
-                if (thisWord.toLowerCase().startsWith(keyWord.toLowerCase())) {
-                    result.add(temp);
-                }
-            }
-        } else {
-            for (Word temp : dictionaryVE) {
-                String thisWord = temp.getWordTarget();
-                if (thisWord.toLowerCase().startsWith(keyWord.toLowerCase())) {
-                    result.add(temp);
-                }
-            }
-        }
+        String prefix = txtSearch.getText().trim();
+        Trie trie = getDisplayTrie();
+        List<String> result = trie.startsWith(trie.getRoot(), prefix);
         initListView(result);
-    }
-
-    public boolean checkSearchBar() {
-        String word = txtSearch.getText().trim();
-        ArrayList<Word> result = new ArrayList<>();
-        int mode = cbLanguage.getSelectionModel().getSelectedIndex();
-        if (mode == 0) {
-            for (Word temp : dictionaryEV) {
-                String thisWord = temp.getWordTarget();
-                if (thisWord.toLowerCase().startsWith(word.toLowerCase())) {
-                    result.add(temp);
-                }
-            }
-        } else {
-            for (Word temp : dictionaryVE) {
-                String thisWord = temp.getWordTarget();
-                if (thisWord.toLowerCase().startsWith(word.toLowerCase())) {
-                    result.add(temp);
-                }
-            }
-        }
-        if (result.size() == 0) return false;
-        else return true;
     }
 
     public static boolean empty(String s) {
@@ -243,23 +177,23 @@ public class Controller implements Initializable {
         int mode = cbLanguage.getSelectionModel().getSelectedIndex();
         if (mode == 0) {
             AlertController.showConfirmAlert("Confirmation Dialog", txtSearch.getText().trim(),
-                    "Từ này không có trong từ điển.\n" + "Chọn option.");
+                    "Từ này không có trong từ điển.\n" + "Bạn muốn?");
         }
         else {
             AlertController.showConfirmAlert("Confirmation Dialog", txtSearch.getText().trim(),
                     "This word isn't in dictionary.\n" + "Choose your option.");
         }
         Alert alert = AlertController.getAlertConfirm();
-        ButtonType buttonTypeOne = new ButtonType("Translate");
-        ButtonType buttonTypeTwo = new ButtonType("Add to dictionary");
+        ButtonType buttonTranslate = new ButtonType("Translate");
+        ButtonType buttonAdd = new ButtonType("Add to dictionary");
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        alert.getButtonTypes().setAll(buttonTypeOne, buttonTypeTwo, buttonTypeCancel);
+        alert.getButtonTypes().setAll(buttonTranslate, buttonAdd, buttonTypeCancel);
 
         Optional<ButtonType> result = alert.showAndWait();
-        if (result.get() == buttonTypeOne){
+        if (result.get() == buttonTranslate){
             showAlertInformation(txtSearch.getText());
         }
-        else if (result.get() == buttonTypeTwo) {
+        else if (result.get() == buttonAdd) {
             int index = cbLanguage.getSelectionModel().getSelectedIndex();
             if (index == 0) {
                 addWordEV();
@@ -269,37 +203,41 @@ public class Controller implements Initializable {
         }
     }
 
-    public void OnEnter() {
-        if (empty(txtSearch.getText())) {
-            showAlertInformation(txtSearch.getText());
+    public void OnEnter(KeyEvent event) {
+        if (event.getCode().equals(KeyCode.ENTER)) {
+            String prefix = txtSearch.getText().trim();
+            List<String> matchesPrefix = currentTrie.startsWith(currentTrie.getRoot(), prefix);
+            if (empty(prefix)) {
+                showAlertInformation(prefix);
+            } else if (matchesPrefix == null) {
+                showAlertConfirmation();
+            } else {
+                lvWords.getSelectionModel().select(0);
+                displaySelected();
+            }
         }
-        else if (checkSearchBar()) {
-            lvWords.getSelectionModel().select(0);
-            displaySelected();
-        }
-        else showAlertConfirmation();
     }
 
     public void selectLanguage(ActionEvent event) {
-        int index = cbLanguage.getSelectionModel().getSelectedIndex();
-        if (index == 0) {
-            initListView(dictionaryEV);
+        if (cbLanguage.getSelectionModel().getSelectedIndex() == 0) {
+            currentTrie = trieEV;
         } else {
-            initListView(dictionaryVE);
+            currentTrie = trieVE;
         }
+        List<String> dictionary = getTrieData(currentTrie);
+        webView.getEngine().loadContent("");
+        initListView(dictionary);
     }
 
     //handler mouse event for bnBack
     public void backButtonHandle(MouseEvent event) {
-        //voi size = 1 tuc la trong stack chinh la tu vua chon nen ko co tu qua khu
         if (stackSearched.size() > 1) {
-            //update Stack wordSelected
             stackSearched.pop();
-            WebEngine webEngine = webView.getEngine();
-            Word lastWord = stackSearched.lastElement();
+            String lastWord = stackSearched.lastElement();
             lvWords.getSelectionModel().select(lastWord);
-            String html = lastWord.getHtml();
-            webEngine.loadContent(html);
+            txtSearch.setText(lastWord);
+            String html = currentTrie.getHtml(lastWord);
+            webView.getEngine().loadContent(html);
         }
         if (stackSearched.size() == 1) {
             btnBack.setDisable(true);
@@ -317,8 +255,7 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDictionaryEV();
-        initListView(dictionaryEV);
+        initListView(getTrieData(trieEV));
     }
 
     public void addWordVE() {
@@ -332,8 +269,7 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDictionaryVE();
-        initListView(dictionaryVE);
+        initListView(getTrieData(trieVE));
     }
 
     public void deleteWordEV() {
@@ -347,8 +283,7 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDictionaryEV();
-        initListView(dictionaryEV);
+        initListView(getTrieData(trieEV));
     }
 
     public void deleteWordVE() {
@@ -362,8 +297,7 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDictionaryVE();
-        initListView(dictionaryVE);
+        initListView(getTrieData(trieVE));
     }
 
     public void updateWordEV() {
@@ -377,8 +311,7 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDictionaryEV();
-        initListView(dictionaryEV);
+        initListView(getTrieData(trieEV));
     }
 
     public void updateWordVE() {
@@ -392,8 +325,7 @@ public class Controller implements Initializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        setDictionaryVE();
-        initListView(dictionaryVE);
+        initListView(getTrieData(trieVE));
     }
 
     //Text to Speech
@@ -415,6 +347,7 @@ public class Controller implements Initializable {
             Scene scene = new Scene(root);
             Node node = scene.lookup("#textArea");
             TextArea textArea = (TextArea) node;
+            textArea.setWrapText(true);
             textArea.setText(text);
 
             stage.setTitle("Text Preview");

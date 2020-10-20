@@ -2,15 +2,14 @@ package dbhandle;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.Control;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
 import sample.Controller;
 import sample.DatabaseConnection;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Optional;
 
 public class DeleteWordVEController {
 
@@ -25,23 +24,23 @@ public class DeleteWordVEController {
             AlertController.showInfoAlert("Warning!", null,
                     "You haven't entered the word!");
         } else {
-            String input = txtDelete.getText();
-            boolean check = true;
-            try {
-                ResultSet rs = DatabaseConnection.getResultSet("va");
-                while (rs.next()) {
-                    if (rs.getString("word").equals(input)) {
-                        DatabaseConnection.deleteWordDB("va", input);
-                        Controller.setDictionaryVE();
-                        check = false;
-                        break;
-                    }
+            String word = txtDelete.getText();
+            if (DatabaseConnection.isContains("va", word)) {
+                AlertController.showConfirmAlert("Confirmation", "Delete this word?", null);
+                Alert alert = AlertController.getAlertConfirm();
+                ButtonType buttonCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+                ButtonType buttonAccept = new ButtonType("OK");
+                alert.getButtonTypes().setAll(buttonAccept, buttonCancel);
+                Optional<ButtonType> result = alert.showAndWait();
+                if (result.get().equals(buttonAccept)) {
+                    DatabaseConnection.deleteWordDB("va", word);
                 }
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
+            } else {
+                AlertController.showInfoAlert("Notification", "Word you entered isn't exist!", null);
             }
-            if (check) AlertController.showInfoAlert("Warning!", null,
-                    "Word you entered isn't exist!");
+            Controller.trieVE.delete(word);
+            Stage current = (Stage) txtDelete.getScene().getWindow();
+            current.close();
         }
     }
 }

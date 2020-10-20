@@ -1,6 +1,9 @@
 package dbhandle;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+
+import java.util.Optional;
 
 public class AlertController {
     private static Alert alertInfo = new Alert(Alert.AlertType.INFORMATION);
