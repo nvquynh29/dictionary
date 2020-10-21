@@ -43,8 +43,8 @@
                <items>
                   <Menu mnemonicParsing="false" text="Translate">
                     <items>
-                      <MenuItem mnemonicParsing="false" text="English to Vietnamese" />
-                        <MenuItem mnemonicParsing="false" text="Vietnamese to English" />
+                      <MenuItem mnemonicParsing="false" onAction="#getTextTranslateEV" text="English to Vietnamese" />
+                        <MenuItem mnemonicParsing="false" onAction="#getTextTranslateVE" text="Vietnamese to English" />
                     </items>
                   </Menu>
                   <Menu mnemonicParsing="false" text="Image to Text">
@@ -72,7 +72,7 @@
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
             </Button>
-            <ListView fx:id="lvWords" layoutX="14.0" layoutY="95.0" onMouseClicked="#displaySelected" prefHeight="463.0" prefWidth="225.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="95.0" />
+            <ListView fx:id="lvWords" layoutX="14.0" layoutY="95.0" onKeyPressed="#handleEnterLVWord" onMouseClicked="#displaySelected" prefHeight="463.0" prefWidth="225.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="95.0" />
             <WebView fx:id="webView" layoutX="268.0" layoutY="96.0" prefHeight="460.0" prefWidth="609.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
             <ComboBox fx:id="cbLanguage" layoutX="694.0" layoutY="2.0" onAction="#selectLanguage" prefHeight="25.0" prefWidth="161.0" AnchorPane.rightAnchor="20.0" />
             <Button fx:id="btnSpeaker" layoutX="823.0" layoutY="44.0" mnemonicParsing="false" onAction="#speak" prefHeight="32.0" prefWidth="32.0" AnchorPane.rightAnchor="20.0" />

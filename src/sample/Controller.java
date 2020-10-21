@@ -205,7 +205,11 @@ public class Controller implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
         if (result.get() == buttonTranslate){
-            showAlertInformation(txtSearch.getText());
+            if (mode == 0) {
+                getTextTranslateEV();
+            } else {
+                getTextTranslateVE();
+            }
         }
         else if (result.get() == buttonAdd) {
             int index = cbLanguage.getSelectionModel().getSelectedIndex();
@@ -229,9 +233,18 @@ public class Controller implements Initializable {
                 goHome();
                 showAlertConfirmation();
             } else {
-                lvWords.getSelectionModel().select(0);
+                if (lvWords.getSelectionModel().getSelectedItems() == null) lvWords.getSelectionModel().select(0);
                 displaySelected();
             }
+        }
+        if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.UP)) {
+            lvWords.requestFocus();
+        }
+    }
+
+    public void handleEnterLVWord(KeyEvent event) {
+        if (event.getCode().equals(KeyCode.ENTER)) {
+            displaySelected();
         }
     }
 
@@ -386,5 +399,36 @@ public class Controller implements Initializable {
 
     public void getTextVietnamese() {
         getTextFromImage("vie");
+    }
+
+    public void getTextTranslateEV() {
+
+        Stage stage = new Stage();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("OCRHandle.fxml"));
+            Scene scene = new Scene(root);
+            stage.setTitle("Dịch từ tiếng anh sang tiếng việt");
+            stage.setScene(scene);
+            OCRHandleController.modeEV = true;
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getTextTranslateVE() {
+
+        Stage stage = new Stage();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("OCRHandle.fxml"));
+            Scene scene = new Scene(root);
+            stage.setTitle("Translate from Vietnamese to English");
+
+            stage.setScene(scene);
+            OCRHandleController.modeEV = false;
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
