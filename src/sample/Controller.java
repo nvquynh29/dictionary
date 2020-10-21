@@ -35,9 +35,6 @@ public class Controller implements Initializable {
     Button btnSpeaker;
 
     @FXML
-    Button btnVoice;
-
-    @FXML
     TextField txtSearch;
 
     @FXML
@@ -48,6 +45,9 @@ public class Controller implements Initializable {
 
     @FXML
     WebView webView;
+
+    @FXML
+    ImageView imgView;
 
     public static Trie trieEV;
     public static Trie trieVE;
@@ -71,6 +71,11 @@ public class Controller implements Initializable {
         initButton();
         initComboBox();
         stackSearched = new Stack<>();
+
+        Image i = new Image(getClass().getResourceAsStream("Witch.gif"));
+        imgView.setImage(i);
+
+        webView.setVisible(false);
     }
 
     public void initListView(List<String> words) {
@@ -97,15 +102,11 @@ public class Controller implements Initializable {
 
     public void initButton() {
         Image imgSpeaker = new Image("icons/speaker.png");
-        Image imgVoice = new Image("icons/microphone.png");
         ImageView ivSpeaker = new ImageView(imgSpeaker);
-        ImageView ivVoice = new ImageView(imgVoice);
 
         ivSpeaker.setPreserveRatio(true);
-        ivVoice.setPreserveRatio(true);
 
         btnSpeaker.setGraphic(ivSpeaker);
-        btnVoice.setGraphic(ivVoice);
 
         btnBack.setDisable(true);
     }
@@ -122,6 +123,8 @@ public class Controller implements Initializable {
     }
 
     public void displaySelected() {
+        imgView.setVisible(false);
+        webView.setVisible(true);
         String wordSelected = lvWords.getSelectionModel().getSelectedItem();
         Trie trie = getDisplayTrie();
         String html = trie.getHtml(wordSelected);
@@ -205,6 +208,8 @@ public class Controller implements Initializable {
 
     public void OnEnter(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
+            imgView.setVisible(false);
+            webView.setVisible(true);
             String prefix = txtSearch.getText().trim();
             List<String> matchesPrefix = currentTrie.startsWith(currentTrie.getRoot(), prefix);
             if (empty(prefix)) {
