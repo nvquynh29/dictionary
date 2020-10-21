@@ -71,7 +71,7 @@ public class Controller implements Initializable {
         initButton();
         initComboBox();
         stackSearched = new Stack<>();
-
+        lvWords.setVisible(false);
         Image i = new Image(getClass().getResourceAsStream("Witch.gif"));
         imgView.setImage(i);
 
@@ -122,6 +122,13 @@ public class Controller implements Initializable {
         cbLanguage.getSelectionModel().select(0);
     }
 
+    public void goHome() {
+        Image i = new Image(getClass().getResourceAsStream("Witch.gif"));
+        imgView.setImage(i);
+        lvWords.setVisible(false);
+        webView.setVisible(false);
+    }
+
     public void displaySelected() {
         imgView.setVisible(false);
         webView.setVisible(true);
@@ -142,7 +149,11 @@ public class Controller implements Initializable {
     }
 
     public void searchWord() {
+        lvWords.setVisible(true);
         String prefix = txtSearch.getText().trim();
+        if (prefix == null || prefix.equals("")) {
+            goHome();
+        }
         Trie trie = getDisplayTrie();
         List<String> result = trie.startsWith(trie.getRoot(), prefix);
         initListView(result);
@@ -188,7 +199,7 @@ public class Controller implements Initializable {
         }
         Alert alert = AlertController.getAlertConfirm();
         ButtonType buttonTranslate = new ButtonType("Translate");
-        ButtonType buttonAdd = new ButtonType("Add to dictionary");
+        ButtonType buttonAdd = new ButtonType("Add this word");
         ButtonType buttonTypeCancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
         alert.getButtonTypes().setAll(buttonTranslate, buttonAdd, buttonTypeCancel);
 
@@ -215,6 +226,7 @@ public class Controller implements Initializable {
             if (empty(prefix)) {
                 showAlertInformation(prefix);
             } else if (matchesPrefix == null) {
+                goHome();
                 showAlertConfirmation();
             } else {
                 lvWords.getSelectionModel().select(0);
@@ -268,6 +280,7 @@ public class Controller implements Initializable {
             Stage newStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/AddWordToVE.fxml"));
             Scene addScene = new Scene(root);
+            newStage.setResizable(false);
             newStage.setScene(addScene);
             newStage.setTitle("Adding new word");
             newStage.showAndWait();
@@ -282,6 +295,7 @@ public class Controller implements Initializable {
             Stage newStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/DeleteWordEV.fxml"));
             Scene addScene = new Scene(root);
+            newStage.setResizable(false);
             newStage.setScene(addScene);
             newStage.setTitle("Xóa từ!");
             newStage.showAndWait();
@@ -296,6 +310,7 @@ public class Controller implements Initializable {
             Stage newStage = new Stage();
             Parent root = FXMLLoader.load(getClass().getResource("/dbhandle/DeleteWordVE.fxml"));
             Scene addScene = new Scene(root);
+            newStage.setResizable(false);
             newStage.setScene(addScene);
             newStage.setTitle("Deleting word");
             newStage.showAndWait();
@@ -346,20 +361,22 @@ public class Controller implements Initializable {
     public void getTextFromImage(String language) {
         OCRHandleController ocr = new OCRHandleController();
         String text = ocr.getTextOCR(language);
-        Stage stage = new Stage();
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("OCRHandle.fxml"));
-            Scene scene = new Scene(root);
-            Node node = scene.lookup("#textArea");
-            TextArea textArea = (TextArea) node;
-            textArea.setWrapText(true);
-            textArea.setText(text);
+        if (text != null && !text.equals("")) {
+            Stage stage = new Stage();
+            try {
+                Parent root = FXMLLoader.load(getClass().getResource("OCRHandle.fxml"));
+                Scene scene = new Scene(root);
+                Node node = scene.lookup("#textArea");
+                TextArea textArea = (TextArea) node;
+                textArea.setWrapText(true);
+                textArea.setText(text);
 
-            stage.setTitle("Text Preview");
-            stage.setScene(scene);
-            stage.showAndWait();
-        } catch (IOException e) {
-            e.printStackTrace();
+                stage.setTitle("Text Preview");
+                stage.setScene(scene);
+                stage.showAndWait();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
