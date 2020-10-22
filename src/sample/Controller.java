@@ -233,7 +233,7 @@ public class Controller implements Initializable {
                 goHome();
                 showAlertConfirmation();
             } else {
-                if (lvWords.getSelectionModel().getSelectedItems() == null) lvWords.getSelectionModel().select(0);
+                lvWords.getSelectionModel().select(0);
                 displaySelected();
             }
         }
@@ -367,8 +367,6 @@ public class Controller implements Initializable {
         Speaker speaker = new Speaker();
         speaker.say(text);
     }
-
-    //Google Translate API free v2
 
     //Text OCR
     public void getTextFromImage(String language) {

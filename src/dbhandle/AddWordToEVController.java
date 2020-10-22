@@ -6,10 +6,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import sample.Controller;
 import sample.DatabaseConnection;
-import sample.Word;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Optional;
 
 public class AddWordToEVController {
@@ -39,8 +36,6 @@ public class AddWordToEVController {
 
     @FXML
     Button btnAdd;
-
-    public Word newWord;
 
     public void addNewWord(ActionEvent event) {
         if (txtEnglish.getText().trim().isEmpty() || txtVietnamese.getText().trim().isEmpty()) {

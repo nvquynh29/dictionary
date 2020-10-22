@@ -17,6 +17,7 @@ public class Trie {
 
     //Class Trie
     private TrieNode root;
+
     List<String> result = new ArrayList<>();
 
     public Trie() {
@@ -44,7 +45,14 @@ public class Trie {
     }
 
 
-    //char[] : them cac ky tu khi duyet, sau do xoa neu can
+    /**
+     * chars : lưu các giá ký tự khi duyệt node hiện tại
+     * khi chuyển sang node mới thì level tự reset,
+     * các ký tự ở nhánh node sau sẽ ghi đè lên nhánh
+     * node trước từ index = 0 trong mảng này
+     * mỗi lần combine thì lấy được  1 word, duyệt hết trie thì
+     * được các từ theo đúng thứ tự bảng chữ cái
+     */
     public List<String> getAllWord(TrieNode parent, char[] chars, int level, String prefix) {
         if (parent != null) {
             if (parent.isEndOfWord) {
@@ -59,6 +67,7 @@ public class Trie {
             if (children.size() > 0) {
                 //Set = Unsorted List
                 Set<Character> keys = children.keySet();
+
                 //Sort list chars
                 List<Character> arr = new ArrayList<>(keys);
                 Collections.sort(arr);
@@ -74,7 +83,7 @@ public class Trie {
 
     /** Inserts a word into the trie. */
     public void insert(String word, String html) {
-        if (word == null || word.length() == 0 || search(word)) {
+        if (word == null || word.length() == 0) {
             return;
         }
 
@@ -175,12 +184,13 @@ public class Trie {
         for (int i = 0; i < word.length(); ++i) {
             char cur = word.charAt(i);
 
-            TrieNode child = iterator.children.get(cur); // Check if having a TrieNode associated with 'cur'
-            if (child == null) { // null if 'word' is way too long or its prefix doesn't appear in the Trie
+            TrieNode child = iterator.children.get(cur);  // Check if having a TrieNode associated with 'cur'
+            if (child == null) {  // null if 'word' is way too long or its prefix doesn't appear in the Trie
                 return false;
             }
 
-            if (iterator.children.size() > 1 || iterator.isEndOfWord) { // Update 'deleteBelow' and 'deleteChar'
+            // Update 'deleteBelow' and 'deleteChar'
+            if (iterator.children.size() > 1 || iterator.isEndOfWord) {
                 deleteBelow = iterator;
                 deleteChar = cur;
             }
