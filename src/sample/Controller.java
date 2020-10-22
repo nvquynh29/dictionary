@@ -46,9 +46,6 @@ public class Controller implements Initializable {
     @FXML
     WebView webView;
 
-    @FXML
-    ImageView imgView;
-
     public static Trie trieEV;
     public static Trie trieVE;
     private Trie currentTrie;
@@ -71,11 +68,6 @@ public class Controller implements Initializable {
         initButton();
         initComboBox();
         stackSearched = new Stack<>();
-        lvWords.setVisible(false);
-        Image i = new Image(getClass().getResourceAsStream("Witch.gif"));
-        imgView.setImage(i);
-
-        webView.setVisible(false);
     }
 
     public void initListView(List<String> words) {
@@ -122,16 +114,7 @@ public class Controller implements Initializable {
         cbLanguage.getSelectionModel().select(0);
     }
 
-    public void goHome() {
-        Image i = new Image(getClass().getResourceAsStream("Witch.gif"));
-        imgView.setImage(i);
-        lvWords.setVisible(false);
-        webView.setVisible(false);
-    }
-
     public void displaySelected() {
-        imgView.setVisible(false);
-        webView.setVisible(true);
         String wordSelected = lvWords.getSelectionModel().getSelectedItem();
         Trie trie = getDisplayTrie();
         String html = trie.getHtml(wordSelected);
@@ -151,9 +134,6 @@ public class Controller implements Initializable {
     public void searchWord() {
         lvWords.setVisible(true);
         String prefix = txtSearch.getText().trim();
-        if (prefix == null || prefix.equals("")) {
-            goHome();
-        }
         Trie trie = getDisplayTrie();
         List<String> result = trie.startsWith(trie.getRoot(), prefix);
         initListView(result);
@@ -223,14 +203,11 @@ public class Controller implements Initializable {
 
     public void OnEnter(KeyEvent event) {
         if (event.getCode().equals(KeyCode.ENTER)) {
-            imgView.setVisible(false);
-            webView.setVisible(true);
             String prefix = txtSearch.getText().trim();
             List<String> matchesPrefix = currentTrie.startsWith(currentTrie.getRoot(), prefix);
             if (empty(prefix)) {
                 showAlertInformation(prefix);
             } else if (matchesPrefix == null) {
-                goHome();
                 showAlertConfirmation();
             } else {
                 lvWords.getSelectionModel().select(0);
@@ -425,6 +402,21 @@ public class Controller implements Initializable {
             stage.setScene(scene);
             OCRHandleController.modeEV = false;
             stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Stage stageAboutUs;
+
+    public void aboutUs() {
+        stageAboutUs = new Stage();
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("AboutUs.fxml"));
+            Scene scene = new Scene(root);
+            stageAboutUs.setTitle("About Us!");
+            stageAboutUs.setScene(scene);
+            stageAboutUs.showAndWait();
         } catch (IOException e) {
             e.printStackTrace();
         }
