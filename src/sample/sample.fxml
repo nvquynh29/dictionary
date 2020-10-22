@@ -7,13 +7,12 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.web.WebView?>
 
-<BorderPane maxHeight="600.0" maxWidth="900.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" styleClass="bodybg" stylesheets="@graphic.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+<BorderPane maxHeight="600.0" maxWidth="900.0" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
    <top>
       <MenuBar BorderPane.alignment="CENTER">
         <menus>
@@ -57,26 +56,28 @@
             </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
-              <MenuItem mnemonicParsing="false" text="About us" />
+              <MenuItem mnemonicParsing="false" onAction="#aboutUs" text="About us" />
             </items>
           </Menu>
         </menus>
       </MenuBar>
    </top>
    <left>
-      <AnchorPane maxHeight="575.0" maxWidth="900.0" prefHeight="575.0" prefWidth="900.0" BorderPane.alignment="CENTER">
+      <AnchorPane maxHeight="575.0" maxWidth="900.0" prefHeight="575.0" prefWidth="900.0" style="-fx-background-color: #0892d0;" BorderPane.alignment="CENTER">
          <children>
-            <TextField fx:id="txtSearch" layoutX="64.0" layoutY="44.0" onKeyPressed="#OnEnter" onKeyReleased="#searchWord" prefHeight="41.0" prefWidth="737.0" styleClass="text-field" stylesheets="@graphic.css" AnchorPane.rightAnchor="88.0" />
-            <Button fx:id="btnBack" layoutX="14.0" layoutY="44.0" mnemonicParsing="false" onMouseClicked="#backButtonHandle" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: #000000;" text="←" textFill="WHITE" AnchorPane.leftAnchor="20.0">
+            <TextField fx:id="txtSearch" layoutX="76.0" layoutY="42.0" onKeyPressed="#OnEnter" onKeyReleased="#searchWord" prefHeight="41.0" prefWidth="718.0" styleClass="text-field" AnchorPane.rightAnchor="106.0">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font></TextField>
+            <Button fx:id="btnBack" layoutX="20.0" layoutY="43.0" mnemonicParsing="false" onMouseClicked="#backButtonHandle" prefHeight="40.0" prefWidth="41.0" style="-fx-background-color: #c6c386;" text="🢀" AnchorPane.leftAnchor="20.0">
                <font>
                   <Font name="Segoe UI Bold" size="16.0" />
                </font>
             </Button>
             <ListView fx:id="lvWords" layoutX="14.0" layoutY="95.0" onKeyPressed="#handleEnterLVWord" onMouseClicked="#displaySelected" prefHeight="463.0" prefWidth="225.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="661.0" AnchorPane.topAnchor="95.0" />
-            <WebView fx:id="webView" layoutX="268.0" layoutY="96.0" prefHeight="460.0" prefWidth="609.0" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
-            <ComboBox fx:id="cbLanguage" layoutX="694.0" layoutY="2.0" onAction="#selectLanguage" prefHeight="25.0" prefWidth="161.0" AnchorPane.rightAnchor="20.0" />
-            <Button fx:id="btnSpeaker" layoutX="823.0" layoutY="44.0" mnemonicParsing="false" onAction="#speak" prefHeight="32.0" prefWidth="32.0" AnchorPane.rightAnchor="20.0" />
-            <ImageView fx:id="imgView" fitHeight="196.0" fitWidth="257.0" layoutX="315.0" layoutY="133.0" pickOnBounds="true" preserveRatio="true" />
+            <WebView fx:id="webView" layoutX="264.0" layoutY="95.0" prefHeight="461.0" prefWidth="609.0" AnchorPane.bottomAnchor="19.0" AnchorPane.rightAnchor="27.0" />
+            <ComboBox fx:id="cbLanguage" layoutX="724.0" layoutY="8.0" onAction="#selectLanguage" prefHeight="25.0" prefWidth="161.0" style="-fx-background-color: #c6c386;" AnchorPane.rightAnchor="14.666666666666629" />
+            <Button fx:id="btnSpeaker" layoutX="814.0" layoutY="42.0" mnemonicParsing="false" onAction="#speak" prefHeight="41.0" prefWidth="41.0" style="-fx-background-color: #c6c386;" AnchorPane.rightAnchor="44.66666666666663" />
          </children>
       </AnchorPane>
    </left>

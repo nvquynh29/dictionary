@@ -13,7 +13,7 @@
             <Font name="Times New Roman" size="20.0" />
          </font>
       </TextArea>
-      <Button fx:id="btTranslate" layoutX="341.0" layoutY="354.0" mnemonicParsing="false" onAction="#Translate" prefHeight="32.0" prefWidth="97.0" style="-fx-background-color: #0075F5;" text="Translate" textFill="WHITE">
+      <Button fx:id="btTranslate" layoutX="341.0" layoutY="354.0" mnemonicParsing="false" onAction="#Translate" prefHeight="32.0" prefWidth="97.0" style="-fx-background-color: #c6c386;" text="Translate">
          <font>
             <Font name="System Bold" size="14.0" />
          </font></Button>
