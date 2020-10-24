@@ -5,7 +5,7 @@ import com.mashape.unirest.http.Unirest;
 import com.mashape.unirest.http.exceptions.UnirestException;
 
 public class Translate {
-    private static final String API_KEY = "2009cb6458msh2299aedd0f113c2p1d0437jsnaa3d485e242a";
+    private static final String API_KEY = "8ade3b5975msh946e51ec3b40876p154610jsn70ccbceb1447";
 
     public static String translate(String text, String source, String target) {
         HttpResponse<String> response = null;

@@ -12,8 +12,11 @@
             <Font name="System Bold" size="12.0" />
          </font>
       </Button>
-      <Label alignment="TOP_CENTER" layoutX="82.0" layoutY="14.0" prefHeight="17.0" prefWidth="416.0" text="Thank for using our production!" />
-      <Label layoutX="82.0" layoutY="69.0" text="JTEAM from K64 - CJ">
+      <Label alignment="TOP_CENTER" layoutX="82.0" layoutY="14.0" prefHeight="17.0" prefWidth="416.0" text="Thank for using our production!">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Label>
+      <Label layoutX="208.0" layoutY="68.0" text="JTEAM from K64 - CJ">
          <font>
             <Font name="System Bold Italic" size="14.0" />
          </font>

@@ -114,6 +114,19 @@ public class Controller implements Initializable {
         cbLanguage.getSelectionModel().select(0);
     }
 
+    public void selectLanguage(ActionEvent event) {
+        if (cbLanguage.getSelectionModel().getSelectedIndex() == 0) {
+            currentTrie = trieEV;
+            btnSpeaker.setDisable(false);
+        } else {
+            currentTrie = trieVE;
+            btnSpeaker.setDisable(true);
+        }
+        List<String> dictionary = getTrieData(currentTrie);
+        webView.getEngine().loadContent("");
+        initListView(dictionary);
+    }
+
     public void displaySelected() {
         String wordSelected = lvWords.getSelectionModel().getSelectedItem();
         Trie trie = getDisplayTrie();
@@ -223,17 +236,6 @@ public class Controller implements Initializable {
         if (event.getCode().equals(KeyCode.ENTER)) {
             displaySelected();
         }
-    }
-
-    public void selectLanguage(ActionEvent event) {
-        if (cbLanguage.getSelectionModel().getSelectedIndex() == 0) {
-            currentTrie = trieEV;
-        } else {
-            currentTrie = trieVE;
-        }
-        List<String> dictionary = getTrieData(currentTrie);
-        webView.getEngine().loadContent("");
-        initListView(dictionary);
     }
 
     //handler mouse event for bnBack
